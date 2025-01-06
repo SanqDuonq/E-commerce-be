@@ -66,8 +66,20 @@ class AuthServices implements IAuth {
         await newOTP.save();
         await mailServices.sendForgotPasswordEmail(data.email,otpCode);
     }
-    async resetPassword(data: { email: string; OTP: string; }): Promise<void> {
-        
+    async resetPassword(data: { OTP: string; newPassword: string; }): Promise<void> {
+        const otp = await OTP.findOne({
+            otp: data.OTP
+        })
+        if (!otp) {
+            throw createErrors(400,'OTP expired or wrong');
+        }
+        const user = await User.findOne({email: otp.email});
+        if (!user) {
+            throw createErrors(404,'User not found');
+        }
+        const hashPassword = await bcrypt.hash(data.newPassword,10);
+        user.password = hashPassword;
+        await user.save();
     }
 }
 
