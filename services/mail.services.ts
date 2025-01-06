@@ -9,6 +9,14 @@ class MailServices {
             html: `Your OTP - ${OTP}`
         })
     }
+    async sendForgotPasswordEmail(email:string,OTP:string) {
+        await transporter.sendMail({
+            from: `"E-commerce" <${process.env.EMAIL_USER!}>`,
+            to: email,
+            subject: 'Forgot Password Email',
+            html: `Your OTP - ${OTP}`
+        })
+    }
 }
 
 const mailServices = new MailServices();

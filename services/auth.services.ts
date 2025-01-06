@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 import OTP from "../models/otp.model";
 import GenerateOTP from "../utils/otp";
 import mailServices from "./mail.services";
-import jwtServices from "./jwt.services";
 
 class AuthServices implements IAuth {
     async signUp(data: { fullName: string; email: string; phoneNumber: number; profilePicture: string; password: string; }): Promise<{userId:string}> {
@@ -55,7 +54,17 @@ class AuthServices implements IAuth {
         await user.save();
     }
     async forgotPassword(data: { email: string; }): Promise<void> {
-        
+        const user = await User.findOne({email: data.email});
+        if (!user) {
+            throw createErrors(404,'Email is not exists');
+        }
+        const otpCode = GenerateOTP();
+        const newOTP = new OTP({
+            email: data.email,
+            otp: otpCode
+        })
+        await newOTP.save();
+        await mailServices.sendForgotPasswordEmail(data.email,otpCode);
     }
     async resetPassword(data: { email: string; OTP: string; }): Promise<void> {
         
