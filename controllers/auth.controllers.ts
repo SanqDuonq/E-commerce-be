@@ -46,6 +46,16 @@ class AuthController {
             catchError(res,error);
         }
     }
+    async logout(req:Request,res:Response) {
+        try {
+            jwtServices.clearJwt(res);
+            res.status(200).json({
+                message: 'Logout successful'
+            })
+        } catch (error) {
+            catchError(res,error);
+        }
+    }
 }
 
 const authController = new AuthController();
