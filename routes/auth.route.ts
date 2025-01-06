@@ -2,7 +2,7 @@ import express from 'express';
 import controller from '../controllers/auth.controllers';
 const router = express.Router();
 
-router.post('/sign-in');
+router.post('/sign-in',controller.signIn);
 router.post('/sign-up',controller.signUp);
 router.post('/verify-email',controller.verifyEmail);
 router.post('/logout');
