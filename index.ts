@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors'
 import connectMongoDB from './databases/mongoDB';
 import authRoutes from './routes/auth.route';
-import NotFoundRoute from './middlewares/not-found-route';
+import NotFoundRoute from './middlewares/not-found.middleware';
 dotenv.config();
 
 const app = express();

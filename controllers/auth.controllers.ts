@@ -1,4 +1,4 @@
-import {Request,Response} from 'express'
+import { Request, Response } from 'express';
 import authServices from '../services/auth.services';
 import catchError from '../utils/catch-error';
 import jwtServices from '../services/jwt.services';
@@ -77,6 +77,17 @@ class AuthController {
             })
             res.status(200).json({
                 message: 'Reset password successful'
+            })
+        } catch (error) {
+            catchError(res,error);
+        }
+    }
+    async checkAuth(req: Request,res: Response) {
+        const user = req.user;
+        try {
+            res.status(200).json({
+                message: 'Check authentication successful',
+                user
             })
         } catch (error) {
             catchError(res,error);
