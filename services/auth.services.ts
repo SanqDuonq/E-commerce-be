@@ -54,9 +54,6 @@ class AuthServices implements IAuth {
         user.isVerify = true;
         await user.save();
     }
-    async logout(): Promise<void> {
-        
-    }
     async forgotPassword(data: { email: string; }): Promise<void> {
         
     }
