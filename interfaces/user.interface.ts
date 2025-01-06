@@ -4,7 +4,6 @@ export interface IUser extends Document {
     phoneNumber: number,
     password: string,
     profilePicture: string,
-    isVerify: boolean,
-    
+    isVerify: boolean
 }
 

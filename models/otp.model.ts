@@ -11,7 +11,7 @@ const OtpModel:Schema<IOtp> = new Schema({
     time: {
         type: Date,
         default: Date.now,
-        index: {expires: 20}
+        index: {expires: 60 * 15}
     }
 }, {collection: 'otp'})
 
