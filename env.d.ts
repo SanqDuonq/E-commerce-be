@@ -4,6 +4,10 @@ declare namespace NodeJS {
         MongoURI: string,
         CLOUDINARY_API_KEY: string,
         CLOUDINARY_API_SECRET: string,
-        CLOUDINARY_NAME: string
+        CLOUDINARY_NAME: string,
+        ACCESS_TOKEN: string,
+        NODE_ENV: string,
+        EMAIL_USER: string,
+        EMAIL_PASS: string
     }
 }

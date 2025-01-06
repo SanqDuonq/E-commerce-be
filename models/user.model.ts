@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
-import { IUser, IUserMethod } from '../interfaces/user.interface'
+import { IUser } from '../interfaces/user.interface'
 
-const UserModel:Schema<IUser & IUserMethod> = new Schema({
+const UserModel:Schema<IUser> = new Schema({
     fullName: {
         type: String,
         required: true
@@ -23,21 +23,11 @@ const UserModel:Schema<IUser & IUserMethod> = new Schema({
         type: String,
         required: true
     },
-    verifyOTP: {
-        type: String
-    },
-    verifyOTPExpiredAt: {
-        type: Date,
-        default: null
-    },
-    resetOTP: {
-        type: String
-    },
-    resetOTPExpiredAt: {
-        type: Date,
-        default: null
+    isVerify: {
+        type: Boolean,
+        default: false
     }
-})
+},{collection: 'user',timestamps: true})
 
 const User = mongoose.model('user',UserModel);
 export default User;
