@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "nodemon -r ts-node index.ts"
+    "dev": "ts-node --files index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -30,5 +30,8 @@
     "otp-generator": "^4.0.1",
     "stripe": "^17.5.0",
     "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0"
   }
 }
