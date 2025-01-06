@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import OTP from "../models/otp.model";
 import GenerateOTP from "../utils/otp";
 import mailServices from "./mail.services";
+import jwtServices from "./jwt.services";
 
 class AuthServices implements IAuth {
     async signUp(data: { fullName: string; email: string; phoneNumber: number; profilePicture: string; password: string; }): Promise<{userId:string}> {
@@ -30,8 +31,16 @@ class AuthServices implements IAuth {
         await mailServices.sendVerifyEmail(data.email,otpCode);
         return {userId: newUser._id.toString()}
     }
-    async signIn(data: { email: string; password: string; }): Promise<void> {
-        
+    async signIn(data: { email: string; password: string; }): Promise<{userId:string}> {
+        const user = await User.findOne({email: data.email});
+        if (!user) {
+            throw createErrors(404,'Email is not exists');
+        }
+        const isMatch = await bcrypt.compare(data.password,user.password);
+        if (!isMatch) {
+            throw createErrors(400,'Email or password wrong');
+        }
+        return {userId: user._id.toString()}
     }
     async verifyEmail(data: { email: string; OTP: string; }): Promise<void> {
         const user = await User.findOne({email: data.email});

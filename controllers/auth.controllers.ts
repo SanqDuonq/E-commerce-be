@@ -18,6 +18,21 @@ class AuthController {
             catchError(res,error);
         }
     }
+    async signIn(req:Request,res:Response) {
+        const {email,password} = req.body;
+        try {
+            const user = await authServices.signIn({
+                email,password
+            })
+            const accessToken = jwtServices.generateJwt(res,user.userId);
+            res.status(200).json({
+                message: 'Login successful',
+                accessToken: accessToken
+            })
+        } catch (error) {
+            catchError(res,error);
+        }
+    }
     async verifyEmail(req:Request,res:Response) {
         const {email,OTP} = req.body;
         try {

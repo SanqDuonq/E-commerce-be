@@ -1,6 +1,5 @@
 import transporter from "../utils/mail";
 
-
 class MailServices {
     async sendVerifyEmail(email:string,OTP:string) {
         await transporter.sendMail({
