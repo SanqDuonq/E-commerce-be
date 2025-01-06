@@ -33,6 +33,18 @@ class AuthServices implements IAuth {
     async signIn(data: { email: string; password: string; }): Promise<void> {
         
     }
+    async verifyEmail(data: { email: string; OTP: string; }): Promise<void> {
+        const user = await User.findOne({email: data.email});
+        if (!user) {
+            throw createErrors(404, 'Email is not exists');
+        }
+        const otp = await OTP.findOne({otp:data.OTP});
+        if (!otp) {
+            throw createErrors(400,'OTP expired or wrong');
+        }
+        user.isVerify = true;
+        await user.save();
+    }
     async logout(): Promise<void> {
         
     }

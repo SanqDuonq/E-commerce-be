@@ -18,6 +18,19 @@ class AuthController {
             catchError(res,error);
         }
     }
+    async verifyEmail(req:Request,res:Response) {
+        const {email,OTP} = req.body;
+        try {
+            await authServices.verifyEmail({
+                email,OTP
+            })
+            res.status(200).json({
+                message: 'Verify email successful'
+            })
+        } catch (error) {
+            catchError(res,error);
+        }
+    }
 }
 
 const authController = new AuthController();
