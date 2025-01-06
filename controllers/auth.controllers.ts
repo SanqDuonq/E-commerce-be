@@ -69,6 +69,19 @@ class AuthController {
             catchError(res,error);
         }
     }
+    async resetPassword(req: Request,res:Response) {
+        const {OTP,newPassword} = req.body;
+        try {
+            await authServices.resetPassword({
+                OTP,newPassword
+            })
+            res.status(200).json({
+                message: 'Reset password successful'
+            })
+        } catch (error) {
+            catchError(res,error);
+        }
+    }
 }
 
 const authController = new AuthController();
