@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { IProduct } from "../interfaces/product.interface";
 
-const productModel:Schema<IProduct> = new Schema({
+const ProductModel:Schema<IProduct> = new Schema({
     name: {
         type: String,
         required: true
@@ -27,9 +27,15 @@ const productModel:Schema<IProduct> = new Schema({
         {
             type: String
         }
-    ]
+    ],
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
+    }
+    
 }, {collection: 'product'})
 
-const Product = mongoose.model('Product',productModel);
+const Product = mongoose.model('Product',ProductModel);
 export default Product;
 
