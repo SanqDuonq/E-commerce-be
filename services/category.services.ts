@@ -1,4 +1,4 @@
-import { ICategoryMethod } from "../interfaces/category.interface";
+import { ICategory, ICategoryMethod } from "../interfaces/category.interface";
 import Category from "../models/category.model";
 import createErrors from 'http-errors';
 
@@ -22,6 +22,10 @@ class CategoryServices implements ICategoryMethod {
         return {
             name: category.name
         }
+    }
+    async getAllCategory(): Promise<ICategory[]> {
+        const category = await Category.find();
+        return category;
     }
 }
 

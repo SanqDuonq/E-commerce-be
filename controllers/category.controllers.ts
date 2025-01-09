@@ -25,6 +25,17 @@ class CategoryController {
             catchError(res,error);
         }
     }
+    async getAllCategory(req: Request, res: Response) {
+        try {
+            const cate = await categoryServices.getAllCategory();
+            res.status(200).json({
+                message: 'Get all category successful',
+                data: cate
+            })
+        } catch (error) {
+            catchError(res,error)
+        }
+    }
 }
 
 const categoryController = new CategoryController();
