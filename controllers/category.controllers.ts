@@ -14,6 +14,17 @@ class CategoryController {
             catchError(res,error);
         } 
     }
+    async removeCategory(req: Request, res:Response) {
+        const {id} = req.params;
+        try {
+            const cate = await categoryServices.removeCategory(id);
+            res.status(200).json({
+                message: `${cate.name} remove successful!`
+            })
+        } catch (error) {
+            catchError(res,error);
+        }
+    }
 }
 
 const categoryController = new CategoryController();
