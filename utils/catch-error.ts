@@ -7,6 +7,7 @@ const catchError = (res: Response,error:unknown) => {
             message: error.message
         })
     }
+    console.log('Error detail', error);
     return res.status(500).json({
         message: `Server error ${error}`
     })

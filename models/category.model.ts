@@ -1,10 +1,17 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import { ICategory } from '../interfaces/category.interface';
 
-const CategoryModel = new mongoose.Schema({
+const CategoryModel:Schema<ICategory> = new Schema({
     name: {
         type: String,
         required: true
-    }
+    },
+    product: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+        }
+    ]
 }, {collection: 'Category'})
 
 const Category = mongoose.model('Category',CategoryModel);

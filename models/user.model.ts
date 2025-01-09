@@ -27,7 +27,7 @@ const UserModel:Schema<IUser> = new Schema({
         type: Boolean,
         default: false
     }
-},{collection: 'user',timestamps: true})
+},{collection: 'User',timestamps: true})
 
-const User = mongoose.model('user',UserModel);
+const User = mongoose.model('User',UserModel);
 export default User;

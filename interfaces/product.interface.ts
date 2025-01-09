@@ -6,8 +6,9 @@ export interface IProduct {
     image: string,
     price: number,
     stock: number,
-    color: string[];
-    category: mongoose.Schema.Types.ObjectId;
+    color: string[],
+    popular: boolean,
+    category: mongoose.Schema.Types.ObjectId
 }
 
 export interface IProductMethod {
