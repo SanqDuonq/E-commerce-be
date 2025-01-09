@@ -11,5 +11,6 @@ export interface IProduct {
 }
 
 export interface IProductMethod {
-    
+    addProduct(data: IProduct): Promise<IProduct>,
+    removeProduct(): Promise<void>
 }
