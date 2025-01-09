@@ -6,5 +6,6 @@ export interface ICategory {
 
 export interface ICategoryMethod {
     addCategory(name:string): Promise<{name: string}>,
-    removeCategory(id: string): Promise<{name: string}>
+    removeCategory(id: string): Promise<{name: string}>,
+    getAllCategory(): Promise<ICategory[]>
 }

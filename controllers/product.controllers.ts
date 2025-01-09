@@ -18,7 +18,7 @@ class ProductController {
             catchError(res,error);
         }
     }
- }
+}
 
 const productController = new ProductController();
 export default productController;
