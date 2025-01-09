@@ -13,7 +13,7 @@ const OtpModel:Schema<IOtp> = new Schema({
         default: Date.now,
         index: {expires: 60 * 10}
     }
-}, {collection: 'otp'})
+}, {collection: 'Otp'})
 
-const OTP = mongoose.model('OTP',OtpModel);
+const OTP = mongoose.model('Otp',OtpModel);
 export default OTP;

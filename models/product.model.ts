@@ -28,13 +28,17 @@ const ProductModel:Schema<IProduct> = new Schema({
             type: String
         }
     ],
+    popular: {
+        type: Boolean,
+        default: false
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
     }
     
-}, {collection: 'product'})
+}, {collection: 'Product'})
 
 const Product = mongoose.model('Product',ProductModel);
 export default Product;
