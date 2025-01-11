@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.post('/add-product',middleware.upload.single('image'),controller.addProduct);
 router.delete('/remove-product/:id',controller.removeProduct);
-router.post('/single');
-router.get('/list');
+router.get('/get-all-product',controller.getAllProduct);
 
 export default router;
