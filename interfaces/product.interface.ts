@@ -13,5 +13,12 @@ export interface IProduct {
 
 export interface IProductMethod {
     addProduct(data: IProduct): Promise<IProduct>,
-    removeProduct(id:string): Promise<void>
+    removeProduct(id:string): Promise<void>,
+    getAllProduct(page:number,size:number,name:string): Promise<IProduct[]>
+}
+
+export interface IProductRepo {
+    page: number,
+    size: number,
+    name: string
 }

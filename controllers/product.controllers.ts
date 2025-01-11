@@ -29,6 +29,19 @@ class ProductController {
             catchError(res,error)
         }
     }
+    async getAllProduct(req: Request, res: Response) {
+        try {
+            const {page,size,name} = req.query;
+            const prod = await productServices.getAllProduct(Number(page),Number(size),name as string);
+            res.status(200).json({
+                message: 'Get all product successful',
+                size: prod.length,
+                data: prod
+            })
+        } catch (error) {
+            catchError(res,error)
+        }
+    }
 }
 
 const productController = new ProductController();
