@@ -4,7 +4,6 @@ import { IUser } from '../interfaces/user.interface'
 const UserModel:Schema<IUser> = new Schema({
     fullName: {
         type: String,
-        required: true
     },
     email: {
         type: String,
@@ -13,7 +12,6 @@ const UserModel:Schema<IUser> = new Schema({
     },
     phoneNumber: {
         type: Number,
-        required: true,
         unique: true
     },
     profilePicture: {
