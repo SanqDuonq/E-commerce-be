@@ -1,14 +1,12 @@
 import {Request,Response} from 'express'
-import imageServices from '../services/image.services';
 import productServices from '../services/product.services';
 import catchError from '../utils/catch-error';
 class ProductController {
     async addProduct(req: Request, res: Response) {
         try {
-            const {name, description, image, price, stock, color, category,popular} = req.body;
-            const imageURL = await imageServices.uploadImage(req.file?.path!);
+            const {name, image, thumbnail, description, price, stock, color, category,popular} = req.body;
             const prod = await productServices.addProduct({
-                name, description, price, stock, color, category, popular, image: imageURL, 
+                name, description, price, stock, color, category, popular, thumbnail, image
             })
             res.status(201).json({
                 message: 'Add product successful',

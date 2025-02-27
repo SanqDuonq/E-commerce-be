@@ -2,8 +2,7 @@ import { IProduct, IProductMethod } from "../interfaces/product.interface";
 import Category from "../models/category.model";
 import Product from "../models/product.model";
 import createErrors from 'http-errors';
-import productController from '../controllers/product.controllers';
-import productRepository from "../repository/product.repositoty";
+import productRepository from "../repository/product.repository";
 
 class ProductServices implements IProductMethod {
     async addProduct(data: IProduct): Promise<IProduct> {
