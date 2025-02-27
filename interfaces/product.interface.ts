@@ -3,9 +3,10 @@ import mongoose from "mongoose";
 export interface IProduct {
     name: string,
     description: string,
-    image: string,
+    thumbnail: string,
     price: number,
     stock: number,
+    image: string[],
     color: string[],
     popular: boolean,
     category: mongoose.Schema.Types.ObjectId

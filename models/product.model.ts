@@ -19,10 +19,14 @@ const ProductModel:Schema<IProduct> = new Schema({
         required: true,
         min: 0
     },
-    image: {
+    thumbnail: {
         type: String,
-        required: true
     },
+    image: [
+        {
+            type: String
+        }
+    ],
     color: [
         {
             type: String

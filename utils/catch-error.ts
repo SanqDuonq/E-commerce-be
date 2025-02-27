@@ -8,9 +8,11 @@ const catchError = (res: Response,error:unknown) => {
         })
         return;
     }
+    console.error("Lỗi:", error);
     return res.status(500).json({
         message: `Server error ${error}`
     })
+    
 }
 
 export default catchError;
