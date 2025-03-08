@@ -1,15 +1,29 @@
-import mongoose from "mongoose";
-
 export interface IProduct {
     name: string,
-    description: string,
     thumbnail: string,
     price: number,
-    stock: number,
-    image: string[],
-    color: string[],
-    popular: boolean,
-    category: mongoose.Schema.Types.ObjectId
+    badge: 'Best Seller' | 'Limited Edition' | null,
+    status: 'New' | null,
+    productDetail: IProductDetail;
+}
+
+export interface IProductDetail extends IProduct{
+    description: string,
+    variant: IVariantProduct
+}
+
+export interface IVariantProduct extends IProductDetail {
+    options: {
+        image: string,
+        color: string,
+        stock: number,   
+        size: number,
+        price: number,
+        material: string,
+        height: number,
+        width: number
+    }[],
+    shape: string[];
 }
 
 export interface IProductMethod {
