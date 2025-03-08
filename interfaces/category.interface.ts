@@ -1,7 +1,16 @@
-
+import { IProduct } from './product.interface';
 export interface ICategory {
     name: string,
-    product: [Object]
+    subCategory: ISubCategory[]
+}
+
+export interface ISubCategory {
+    name: string,
+    productType: IProductType[];
+}
+
+export interface IProductType {
+    product: IProduct[];
 }
 
 export interface ICategoryMethod {
