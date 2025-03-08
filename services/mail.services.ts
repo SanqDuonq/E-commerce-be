@@ -1,6 +1,6 @@
 import transporter from "../utils/mail";
 
-class MailServices {
+class MailServices {    
     async sendVerifyEmail(email:string,OTP:string) {
         await transporter.sendMail({
             from: `"E-commerce" <${process.env.EMAIL_USER!}>`,
