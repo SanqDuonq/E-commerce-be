@@ -1,41 +1,39 @@
-import {Request,Response} from 'express';
-import categoryServices from '../services/category.services';
-import catchError from '../utils/catch-error';
+import { Request, Response } from "express";
+import categoryServices from "../services/category.services";
+import catchError from "../utils/catch-error";
+import asyncError from "../middlewares/error.middleware";
+
 class CategoryController {
-    async addCategory(req: Request, res: Response) {
-        const {name} = req.body;
-        try {
-            const cate = await categoryServices.addCategory(name);
-            res.status(201).json({
-                message: 'Add category successful',
-                data: cate
-            })
-        } catch (error) {
-            catchError(res,error);
-        } 
-    }
-    async removeCategory(req: Request, res:Response) {
-        const {id} = req.params;
-        try {
-            const cate = await categoryServices.removeCategory(id);
-            res.status(200).json({
-                message: `${cate.name} remove successful!`
-            })
-        } catch (error) {
-            catchError(res,error);
-        }
-    }
-    async getAllCategory(req: Request, res: Response) {
-        try {
-            const cate = await categoryServices.getAllCategory();
-            res.status(200).json({
-                message: 'Get all category successful',
-                data: cate
-            })
-        } catch (error) {
-            catchError(res,error)
-        }
-    }
+	addCategory = asyncError(async (req: Request, res: Response) => {
+		const { name } = req.body;
+		const cate = await categoryServices.addCategory(name);
+		res.status(201).json({
+			message: "Add category successful",
+			data: cate,
+		});
+	});
+	async removeCategory(req: Request, res: Response) {
+		const { id } = req.params;
+		try {
+			const cate = await categoryServices.removeCategory(id);
+			res.status(200).json({
+				message: `${cate.name} remove successful!`,
+			});
+		} catch (error) {
+			catchError(res, error);
+		}
+	}
+	async getAllCategory(req: Request, res: Response) {
+		try {
+			const cate = await categoryServices.getAllCategory();
+			res.status(200).json({
+				message: "Get all category successful",
+				data: cate,
+			});
+		} catch (error) {
+			catchError(res, error);
+		}
+	}
 }
 
 const categoryController = new CategoryController();
