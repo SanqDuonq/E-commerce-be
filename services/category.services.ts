@@ -1,18 +1,15 @@
 import { ICategory, ICategoryMethod } from "../interfaces/category.interface";
-import Category from "../models/category.model";
+import Category from '../models/category.model';
 import createErrors from 'http-errors';
+import categoryRepository from "../repository/category.repository";
 
 class CategoryServices implements ICategoryMethod {
-    async addCategory(name: string): Promise<{name:string}> {
-        const category = await Category.findOne({name});
-        if (category) {
-            throw createErrors(409, 'This category is exists!');
+    async addCategory(name: string) {
+        const foundName = await categoryRepository.findByName(name);
+        if(foundName) {
+            throw createErrors(404, 'Category is already exist');
         }
-        const newCategory = new Category({name});
-        await newCategory.save();
-        return {
-            name: newCategory.name
-        }
+        return await categoryRepository.create(name);
     }
     async removeCategory(id: string): Promise<{ name: string; }> {
         const category = await Category.findByIdAndDelete(id);

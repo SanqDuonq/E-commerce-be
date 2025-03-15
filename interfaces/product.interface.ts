@@ -7,12 +7,12 @@ export interface IProduct {
     productDetail: IProductDetail;
 }
 
-export interface IProductDetail extends IProduct{
+export interface IProductDetail {
     description: string,
-    variant: IVariantProduct
+    variant: IProductVariant[]
 }
 
-export interface IVariantProduct extends IProductDetail {
+export interface IProductVariant {
     options: {
         image: string,
         color: string,
@@ -20,8 +20,6 @@ export interface IVariantProduct extends IProductDetail {
         size: number,
         price: number,
         material: string,
-        height: number,
-        width: number
     }[],
     shape: string[];
 }

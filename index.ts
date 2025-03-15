@@ -10,6 +10,8 @@ import cateRoutes from './routes/category.route';
 import NotFoundRoute from './middlewares/not-found.middleware';
 import connectCloudinary from './utils/cloudinary';
 import Database from './databases/database';
+import catchError from './utils/catch-error';
+import errorHandler from './utils/error-handle';
 dotenv.config();
 
 const app = express();
@@ -29,7 +31,7 @@ app.use('/api/prod',prodRoutes);
 app.use('/api/img',imgRoutes);
 app.use('/api/cart',cartRoutes);
 
-
+app.use(errorHandler);
 app.use(NotFoundRoute);
 
 const database = Database.getInstance();

@@ -1,11 +1,11 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema}  from 'mongoose';
 import { ICategory } from '../interfaces/category.interface';
 
 const CategoryModel:Schema<ICategory> = new Schema({
     name: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, 'Category name is required'],
+        unique: [true, 'Category name must be unique']
     },
     product: [
         {

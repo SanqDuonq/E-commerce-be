@@ -1,20 +1,13 @@
 import { IProduct } from './product.interface';
-export interface ICategory {
-    name: string,
-    subCategory: ISubCategory[]
-}
+import { Document } from 'mongoose';
 
-export interface ISubCategory {
+export interface ICategory extends Document{
     name: string,
-    productType: IProductType[];
-}
-
-export interface IProductType {
-    product: IProduct[];
+    product: IProduct[]
 }
 
 export interface ICategoryMethod {
-    addCategory(name:string): Promise<{name: string}>,
+    addCategory(name:string): any,
     removeCategory(id: string): Promise<{name: string}>,
     getAllCategory(): Promise<ICategory[]>
 }

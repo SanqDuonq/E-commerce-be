@@ -4,9 +4,9 @@ import { IProduct } from "../interfaces/product.interface";
 const ProductModel:Schema<IProduct> = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
     },
-    description: {
+    thumbnail: {
         type: String,
         required: true
     },
@@ -14,34 +14,21 @@ const ProductModel:Schema<IProduct> = new Schema({
         type: Number,
         required: true
     },
-    stock: {
-        type: Number,
-        required: true,
-        min: 0
-    },
-    thumbnail: {
+    badge: {
         type: String,
+        enum: ['Best Seller', 'Limited Edition', null],
+        default: null
     },
-    image: [
-        {
-            type: String
-        }
-    ],
-    color: [
-        {
-            type: String
-        }
-    ],
-    popular: {
-        type: Boolean,
-        default: false
+    status: {
+        type: String,
+        enum: ['News', null],
+        default: null
     },
-    category: {
+    productDetail: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-        required: true
+        required: true,
+        ref: 'ProductDetail'
     }
-    
 }, {collection: 'Product'})
 
 const Product = mongoose.model('Product',ProductModel);

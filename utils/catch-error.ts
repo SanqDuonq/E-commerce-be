@@ -1,7 +1,7 @@
 import {Response} from 'express';
 import {HttpError} from 'http-errors';
 
-const catchError = (res: Response,error:unknown) => {
+const catchError = (res: Response, error: unknown) => {
     if (error instanceof HttpError) {
         res.status(error.status).json({
             message: error.message
