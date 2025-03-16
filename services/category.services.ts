@@ -1,28 +1,35 @@
-import { ICategory, ICategoryMethod } from "../interfaces/category.interface";
-import Category from '../models/category.model';
-import createErrors from 'http-errors';
 import categoryRepository from "../repository/category.repository";
+import throwError from "../utils/create-error";
 
-class CategoryServices implements ICategoryMethod {
-    async addCategory(name: string) {
-        const foundName = await categoryRepository.findByName(name);
-        if(foundName) {
-            throw createErrors(404, 'Category is already exist');
+class CategoryServices {
+    private async checkNameExist(name: string) {
+        if (await categoryRepository.findName(name)) {
+            throwError(409, 'Category name is already exists');
         }
+    }
+
+    private async checkIdExist(id: string) {
+        if (!(await categoryRepository.findId(id))) {
+            throwError(404, 'Category name not found');
+        }
+    }
+
+    async addCategory(name: string) {
+        await this.checkNameExist(name);
         return await categoryRepository.create(name);
     }
-    async removeCategory(id: string): Promise<{ name: string; }> {
-        const category = await Category.findByIdAndDelete(id);
-        if (!category) {
-            throw createErrors(404, 'This category not found')
-        }
-        return {
-            name: category.name
-        }
+
+    async removeCategory(id: string) {
+        await this.checkIdExist(id);
+        return await categoryRepository.remove(id);
     }
-    async getAllCategory(): Promise<ICategory[]> {
-        const category = await Category.find();
-        return category;
+
+    async editCategory(id: string, newName: string) {
+        return await categoryRepository.edit(id, newName);
+    }
+
+    async getAllCategory() {
+        return await categoryRepository.getAll();
     }
 }
 

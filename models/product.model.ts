@@ -5,6 +5,7 @@ const ProductModel:Schema<IProduct> = new Schema({
     name: {
         type: String,
         required: true,
+        unique: true
     },
     thumbnail: {
         type: String,
@@ -21,15 +22,19 @@ const ProductModel:Schema<IProduct> = new Schema({
     },
     status: {
         type: String,
-        enum: ['News', null],
+        enum: ['New', null],
         default: null
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
     },
     productDetail: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'ProductDetail'
     }
-}, {collection: 'Product'})
+}, {collection: 'Product', timestamps: true})
 
 const Product = mongoose.model('Product',ProductModel);
 export default Product;
