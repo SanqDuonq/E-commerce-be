@@ -6,8 +6,3 @@ export interface ICategory extends Document{
     product: IProduct[]
 }
 
-export interface ICategoryMethod {
-    addCategory(name:string): any,
-    removeCategory(id: string): Promise<{name: string}>,
-    getAllCategory(): Promise<ICategory[]>
-}

@@ -1,39 +1,32 @@
 import { Request, Response } from "express";
 import categoryServices from "../services/category.services";
-import catchError from "../utils/catch-error";
 import asyncError from "../middlewares/error.middleware";
+import returnRes from "../utils/response";
 
 class CategoryController {
 	addCategory = asyncError(async (req: Request, res: Response) => {
-		const { name } = req.body;
+		const {name} = req.body;
 		const cate = await categoryServices.addCategory(name);
-		res.status(201).json({
-			message: "Add category successful",
-			data: cate,
-		});
+		returnRes(res, 201, 'Add category successful', cate);
 	});
-	async removeCategory(req: Request, res: Response) {
-		const { id } = req.params;
-		try {
-			const cate = await categoryServices.removeCategory(id);
-			res.status(200).json({
-				message: `${cate.name} remove successful!`,
-			});
-		} catch (error) {
-			catchError(res, error);
-		}
-	}
-	async getAllCategory(req: Request, res: Response) {
-		try {
-			const cate = await categoryServices.getAllCategory();
-			res.status(200).json({
-				message: "Get all category successful",
-				data: cate,
-			});
-		} catch (error) {
-			catchError(res, error);
-		}
-	}
+
+	removeCategory = asyncError(async (req: Request, res: Response) => {
+		const {id} = req.params;
+		await categoryServices.removeCategory(id);
+		returnRes(res, 200, 'Remove category successful');
+	})
+
+	editCategory = asyncError(async (req: Request, res: Response) => {
+		const {id} = req.params;
+		const {newName} = req.body;
+		await categoryServices.editCategory(id,newName);
+		returnRes(res, 200, `Edit ${newName} successful`);
+	})
+
+	getAllCategory = asyncError(async (req: Request, res: Response) => {
+		const data = await categoryServices.getAllCategory();
+		returnRes(res, 200, 'Get all category successful',data);
+	})
 }
 
 const categoryController = new CategoryController();
