@@ -17,6 +17,7 @@ class MailServices {
             html: `Your OTP - ${OTP}`
         })
     }
+    
 }
 
 const mailServices = new MailServices();

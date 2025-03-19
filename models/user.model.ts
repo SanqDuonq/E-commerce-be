@@ -4,6 +4,7 @@ import { IUser } from '../interfaces/user.interface'
 const UserModel:Schema<IUser> = new Schema({
     fullName: {
         type: String,
+        required: true
     },
     email: {
         type: String,
@@ -12,10 +13,13 @@ const UserModel:Schema<IUser> = new Schema({
     },
     phoneNumber: {
         type: Number,
-        unique: true
+        unique: true,
+        sparse: true,
+        default: null
     },
     profilePicture: {
-        type: String
+        type: String,
+        default: null
     },
     password: {
         type: String,
@@ -24,7 +28,13 @@ const UserModel:Schema<IUser> = new Schema({
     isVerify: {
         type: Boolean,
         default: false
-    }
+    },
+    providers: [
+        {
+            providerName: { type: String },
+            providerId: { type: String}
+        }
+    ]
 },{collection: 'User',timestamps: true})
 
 const User = mongoose.model('User',UserModel);
