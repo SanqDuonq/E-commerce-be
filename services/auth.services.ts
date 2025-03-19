@@ -1,85 +1,54 @@
-import { IAuth } from "../interfaces/auth.interface";
-import User from "../models/user.model";
-import createErrors from 'http-errors';
-import bcrypt from 'bcrypt';
-import OTP from "../models/otp.model";
-import GenerateOTP from "../utils/otp";
 import mailServices from "./mail.services";
+import authRepository from "../repository/auth.repository";
+import throwError from '../utils/create-error';
+import bcrypt from "../utils/bcrypt";
+import { IUser } from "../interfaces/user.interface";
+import otpServices from "./otp.services";
+import otpRepository from "../repository/otp.repository";
 
-class AuthServices implements IAuth {
-    async signUp(data: { fullName: string; email: string; phoneNumber: number; profilePicture: string; password: string; }): Promise<{userId:string}> {
-        const user = await User.findOne({email: data.email})
-        if (user) {
-            throw createErrors(409,'Email already exists');
+class AuthServices {
+    private async checkEmail(email: string) {
+        if (await authRepository.findEmail(email)) {
+            throwError(404, 'Email is already exists')
         }
-        const hashPassword = await bcrypt.hash(data.password,10);
-        const newUser = new User({
-            email: data.email,
-            fullName: data.fullName,
-            phoneNumber: data.phoneNumber,
-            password: hashPassword,
-            profilePicture: data.profilePicture
-        });
-        await newUser.save();
-        const otpCode = GenerateOTP();
-        const newOTP = new OTP({
-            email: data.email,
-            otp: otpCode
-        })
-        await newOTP.save();
-        await mailServices.sendVerifyEmail(data.email,otpCode);
-        return {userId: newUser._id.toString()}
     }
-    async signIn(data: { email: string; password: string; }): Promise<{userId:string}> {
-        const user = await User.findOne({email: data.email});
-        if (!user) {
-            throw createErrors(404,'Email is not exists');
-        }
-        const isMatch = await bcrypt.compare(data.password,user.password);
-        if (!isMatch) {
-            throw createErrors(400,'Email or password wrong');
-        }
-        return {userId: user._id.toString()}
+
+    private async getUserByEmail(email: string) {
+        return (await authRepository.findEmail(email)) ?? throwError(404, 'Email not found');
     }
-    async verifyEmail(data: { email: string; OTP: string; }): Promise<void> {
-        const user = await User.findOne({email: data.email});
-        if (!user) {
-            throw createErrors(404, 'Email is not exists');
+
+    private async comparePassword(password: string, hashPassword: string) {
+        if (!(await bcrypt.Compare(password,hashPassword))) {
+            throwError(400, 'Email or password wrong')
         }
-        const otp = await OTP.findOne({otp:data.OTP});
-        if (!otp) {
-            throw createErrors(400,'OTP expired or wrong');
-        }
-        user.isVerify = true;
-        await user.save();
     }
-    async forgotPassword(data: { email: string; }): Promise<void> {
-        const user = await User.findOne({email: data.email});
-        if (!user) {
-            throw createErrors(404,'Email is not exists');
-        }
-        const otpCode = GenerateOTP();
-        const newOTP = new OTP({
-            email: data.email,
-            otp: otpCode
-        })
-        await newOTP.save();
-        await mailServices.sendForgotPasswordEmail(data.email,otpCode);
+
+    signUp = async(user: IUser) => {
+        await this.checkEmail(user.email);
+        user.password = await bcrypt.Hash(user.password);
+        const otp = otpServices.generateOTP();
+        await otpServices.saveOTP(user.email,otp);
+        mailServices.sendVerifyEmail(user.email,otp);
+        return await authRepository.createUser(user);
     }
-    async resetPassword(data: { OTP: string; newPassword: string; }): Promise<void> {
-        const otp = await OTP.findOne({
-            otp: data.OTP
-        })
-        if (!otp) {
-            throw createErrors(400,'OTP expired or wrong');
-        }
-        const user = await User.findOne({email: otp.email});
-        if (!user) {
-            throw createErrors(404,'User not found');
-        }
-        const hashPassword = await bcrypt.hash(data.newPassword,10);
-        user.password = hashPassword;
-        await user.save();
+
+    signIn = async (email: string, password: string) => {
+        const user = await this.getUserByEmail(email);
+        await this.comparePassword(password, user.password);
+        return user.id;
+    }
+
+    forgotPassword = async (email: string) => {
+        await this.getUserByEmail(email);
+        const otp = otpServices.generateOTP();
+        await otpServices.saveOTP(email,otp);
+        mailServices.sendForgotPasswordEmail(email,otp);
+    }
+
+    resetPassword = async (email: string, otp: string, newPassword: string) => {
+        await otpServices.verifyOTP(email,otp);
+        await authRepository.updatePassword(email, await bcrypt.Hash(newPassword));
+        await otpRepository.deleteOTP(email);
     }
 }
 

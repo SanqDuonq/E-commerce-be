@@ -21,8 +21,8 @@ class CategoryRepository {
         return await Category.findByIdAndUpdate(id, {name: newName});
     }
 
-    async getAll() {
-        return await Category.find();
+    async getAll(categoryName?: string) {
+        return categoryName ? await this.findName(categoryName) : await Category.find();
     }
 }
 

@@ -28,8 +28,8 @@ class CategoryServices {
         return await categoryRepository.edit(id, newName);
     }
 
-    async getAllCategory() {
-        return await categoryRepository.getAll();
+    async getAllCategory(categoryName?: string) {
+        return await categoryRepository.getAll(categoryName);
     }
 }
 

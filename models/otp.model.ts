@@ -3,15 +3,16 @@ import { IOtp } from "../interfaces/otp.interface";
 
 const OtpModel:Schema<IOtp> = new Schema({
     email: {
-        type: String
+        type: String,
+        required: true
     },
     otp: {
-        type: String
+        type: String,
+        required: true
     },
     time: {
         type: Date,
-        default: Date.now,
-        index: {expires: 60 * 10}
+        required: true
     }
 }, {collection: 'Otp'})
 

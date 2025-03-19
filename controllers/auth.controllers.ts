@@ -2,97 +2,50 @@ import { Request, Response } from 'express';
 import authServices from '../services/auth.services';
 import catchError from '../utils/catch-error';
 import jwtServices from '../services/jwt.services';
+import asyncError from '../middlewares/error.middleware';
+import returnRes from '../utils/response';
+import otpServices from '../services/otp.services';
 class AuthController {
-    async signUp(req:Request,res:Response) {
-        const {email,password,fullName,profilePicture,phoneNumber} = req.body;
-        try {
-            const user = await authServices.signUp({
-                email, password, fullName, profilePicture, phoneNumber
-            })
-            const accessToken = jwtServices.generateJwt(res,user.userId);
-            res.status(201).json({
-                message: 'User created successful',
-                accessToken: accessToken
-            })
-        } catch (error) {
-            catchError(res,error);
-        }
-    }
-    async signIn(req:Request,res:Response) {
+    signUp = asyncError(async (req:Request,res:Response) => {
+        const data = await authServices.signUp(req.body);
+        const accessToken = jwtServices.generateJwt(res,data.id);
+        returnRes(res,201,'Sign up successful',accessToken);
+    })
+
+    verifyEmail = asyncError(async(req:Request,res:Response) => {
+        const {email,otp} = req.body;
+        await otpServices.verifyOTP(email,otp);
+        returnRes(res,200,'Verify email successful');
+    })
+
+    signIn = asyncError(async(req:Request,res:Response) => {
         const {email,password} = req.body;
-        try {
-            const user = await authServices.signIn({
-                email,password
-            })
-            const accessToken = jwtServices.generateJwt(res,user.userId);
-            res.status(200).json({
-                message: 'Login successful',
-                accessToken: accessToken
-            })
-        } catch (error) {
-            catchError(res,error);
-        }
-    }
-    async verifyEmail(req:Request,res:Response) {
-        const {email,OTP} = req.body;
-        try {
-            await authServices.verifyEmail({
-                email,OTP
-            })
-            res.status(200).json({
-                message: 'Verify email successful'
-            })
-        } catch (error) {
-            catchError(res,error);
-        }
-    }
-    async logout(req:Request,res:Response) {
-        try {
-            jwtServices.clearJwt(res);
-            res.status(200).json({
-                message: 'Logout successful'
-            })
-        } catch (error) {
-            catchError(res,error);
-        }
-    }
-    async forgotPassword(req:Request,res:Response) {
+        const userId = await authServices.signIn(email,password);
+        const accessToken = jwtServices.generateJwt(res,userId);
+        returnRes(res,200,'Sign in successful', accessToken);
+    })
+
+    logout = asyncError(async(req:Request,res:Response) => {
+        jwtServices.clearJwt(res);
+        returnRes(res,200,'Log out successful')
+    })
+
+    forgotPassword = asyncError(async(req:Request,res:Response) => { 
         const {email} = req.body;
-        try {
-            await authServices.forgotPassword({
-                email
-            })
-            res.status(200).json({
-                message: `OTP sent to ${email}`
-            })
-        } catch (error) {
-            catchError(res,error);
-        }
-    }
-    async resetPassword(req: Request,res:Response) {
-        const {OTP,newPassword} = req.body;
-        try {
-            await authServices.resetPassword({
-                OTP,newPassword
-            })
-            res.status(200).json({
-                message: 'Reset password successful'
-            })
-        } catch (error) {
-            catchError(res,error);
-        }
-    }
-    async checkAuth(req: Request,res: Response) {
+        await authServices.forgotPassword(email);
+        returnRes(res,200,`OTP sent to ${email}`)
+    })
+    
+    resetPassword = asyncError(async(req:Request,res:Response) => {
+        const {email, otp, newPassword} = req.body;
+        await authServices.resetPassword(email, otp,newPassword);
+        returnRes(res,200,'Reset password successful')
+    })
+   
+    checkAuth = asyncError(async(req: Request, res: Response) => {
         const user = req.user;
-        try {
-            res.status(200).json({
-                message: 'Check authentication successful',
-                user
-            })
-        } catch (error) {
-            catchError(res,error);
-        }
-    }
+        returnRes(res,200,'Check authentication successful',user);
+    })
 }
 
 const authController = new AuthController();

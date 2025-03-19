@@ -24,8 +24,9 @@ class CategoryController {
 	})
 
 	getAllCategory = asyncError(async (req: Request, res: Response) => {
-		const data = await categoryServices.getAllCategory();
-		returnRes(res, 200, 'Get all category successful',data);
+		const {categoryName} = req.query; 
+		const data = await categoryServices.getAllCategory(categoryName as string);
+		returnRes(res, 200, 'Get category successful',data!);
 	})
 }
 
