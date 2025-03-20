@@ -46,7 +46,7 @@ class AuthServices {
     }
 
     resetPassword = async (email: string, otp: string, newPassword: string) => {
-        await otpServices.verifyOTP(email,otp);
+        await otpServices.findOTP(email,otp);
         await authRepository.updatePassword(email, await bcrypt.Hash(newPassword));
         await otpRepository.deleteOTP(email);
     }

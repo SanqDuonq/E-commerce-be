@@ -13,8 +13,6 @@ const UserModel:Schema<IUser> = new Schema({
     },
     phoneNumber: {
         type: Number,
-        unique: true,
-        sparse: true,
         default: null
     },
     profilePicture: {

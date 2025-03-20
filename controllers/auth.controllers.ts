@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import authServices from '../services/auth.services';
-import catchError from '../utils/catch-error';
 import jwtServices from '../services/jwt.services';
 import asyncError from '../middlewares/error.middleware';
 import returnRes from '../utils/response';
