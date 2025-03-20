@@ -7,7 +7,6 @@ class ProductController {
     addProduct = asyncError(async (req: Request, res: Response) =>  {
         const {name, thumbnail, price, badge, status,category, productDetail} = req.body;
         const data = await productServices.createProduct({name,thumbnail,price,badge,status,category, productDetail});
-        console.log(data);
         returnRes(res, 201, 'Add product successful', data);
     })
 

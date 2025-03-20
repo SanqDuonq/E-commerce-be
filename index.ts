@@ -9,9 +9,9 @@ import cartRoutes from './routes/cart.route';
 import cateRoutes from './routes/category.route';
 import NotFoundRoute from './middlewares/not-found.middleware';
 import connectCloudinary from './utils/cloudinary';
-import Database from './databases/database';
-import catchError from './utils/catch-error';
+import Database from './databases/mongo';
 import errorHandler from './utils/error-handle';
+import connectRedis from './databases/redis';
 dotenv.config();
 
 const app = express();
@@ -39,5 +39,6 @@ const database = Database.getInstance();
 app.listen(port, () => {
     console.log(`App started at http://localhost:${port}`);
     database.connectMongoDB();    
+    connectRedis();
     connectCloudinary();
 })
