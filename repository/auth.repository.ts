@@ -1,4 +1,4 @@
-import { IUser } from "../interfaces/user.interface";
+import { IProfileGoogle, IUser } from "../interfaces/user.interface";
 import User from "../models/user.model";
 
 
@@ -24,6 +24,8 @@ class AuthRepository {
             password: hashPassword
         })
     }
+
+
 }
 
 export default new AuthRepository();

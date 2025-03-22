@@ -2,9 +2,10 @@ import mailServices from "./mail.services";
 import authRepository from "../repository/auth.repository";
 import throwError from '../utils/create-error';
 import bcrypt from "../utils/bcrypt";
-import { IUser } from "../interfaces/user.interface";
+import { IProfileGoogle, IUser } from "../interfaces/user.interface";
 import otpServices from "./otp.services";
 import otpRepository from "../repository/otp.repository";
+import User from "../models/user.model";
 
 class AuthServices {
     private async checkEmail(email: string) {
@@ -21,6 +22,10 @@ class AuthServices {
         if (!(await bcrypt.Compare(password,hashPassword))) {
             throwError(400, 'Email or password wrong')
         }
+    }
+
+    private async checkUserGoogle(id: string) {
+        return await User.findOne({'oauth.googleId': id})
     }
 
     signUp = async(user: IUser) => {
@@ -49,6 +54,21 @@ class AuthServices {
         await otpServices.findOTP(email,otp);
         await authRepository.updatePassword(email, await bcrypt.Hash(newPassword));
         await otpRepository.deleteOTP(email);
+    }
+
+    async createUserGoogle(profile: IProfileGoogle) {
+        let user = await User.findOne({'oauth.googleId': profile.id});
+        if (!user) {
+            user = await User.create({
+                oauth: {googleId: profile.id},
+                email: profile.emails?.[0]?.value || '',
+                fullName: profile.displayName,
+                profilePicture: profile.photos?.[0]?.value || '',
+                password: 'google',
+                isVerify: true
+            })
+        }
+        return user;
     }
 }
 
