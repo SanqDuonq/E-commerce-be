@@ -6,7 +6,7 @@ import throwError from "../utils/create-error";
 class ProductServices {
     private async checkExistName(name: string) {
         if (await productRepository.findName(name)) {
-            throwError(409, 'Product name is already exist');
+            throwError(409, 'Product name is already exist')
         }
     }
     

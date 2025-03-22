@@ -12,4 +12,7 @@ router.post('/forgot-password',controller.forgotPassword);
 router.post('/reset-password',controller.resetPassword);
 router.get('/checkAuth',middleware.verifyToken,controller.checkAuth);
 
+router.get('/google', controller.googleAuth)
+router.get('/google/callback', controller.googleCallback);
+
 export default router;

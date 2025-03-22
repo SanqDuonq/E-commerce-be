@@ -1,9 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import authServices from '../services/auth.services';
 import jwtServices from '../services/jwt.services';
 import asyncError from '../middlewares/error.middleware';
 import returnRes from '../utils/response';
 import otpServices from '../services/otp.services';
+import passport from 'passport';
 class AuthController {
     signUp = asyncError(async (req:Request,res:Response) => {
         const data = await authServices.signUp(req.body);
@@ -45,6 +46,20 @@ class AuthController {
         const user = req.user;
         returnRes(res,200,'Check authentication successful',user);
     })
+
+    googleAuth = asyncError(async(req: Request, res: Response, next: NextFunction) => {
+        passport.authenticate('google', {scope: ['email', 'profile']}) (req,res,next);
+    })
+
+    googleCallback = asyncError(async(req: Request, res: Response, next: NextFunction) => {
+        passport.authenticate('google', {session: false}, async(err, user) => {
+            if (!user || err) {
+                return res.redirect('http://localhost:5173/login');
+            }
+            jwtServices.generateJwt(res,user.id);
+            return res.redirect('http://localhost:5173/')
+        })(req,res,next);
+    }) 
 }
 
 const authController = new AuthController();

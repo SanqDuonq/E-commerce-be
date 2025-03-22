@@ -21,18 +21,17 @@ const UserModel:Schema<IUser> = new Schema({
     },
     password: {
         type: String,
-        required: true
+        required: function () {
+            return !this.oauth?.googleId; 
+        }
     },
     isVerify: {
         type: Boolean,
         default: false
     },
-    providers: [
-        {
-            providerName: { type: String },
-            providerId: { type: String}
-        }
-    ]
+    oauth: {
+        googleId: { type: String, unique: true, sparse: true}
+    }
 },{collection: 'User',timestamps: true})
 
 const User = mongoose.model('User',UserModel);

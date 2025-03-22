@@ -1,9 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import { IProductDetail } from "../interfaces/product.interface";
 
-interface IProductDetailDocument extends IProductDetail, Document {}
 
-const ProductDetailModel = new Schema<IProductDetailDocument>({
+const ProductDetailModel = new Schema<IProductDetail>({
     description: {
         type: String,
         required: true

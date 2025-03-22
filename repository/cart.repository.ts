@@ -1,22 +1,21 @@
-import { redis } from "../databases/redis"
-import { ICart } from "../interfaces/cart.interface";
+// import Redis from "ioredis";
+// import { ICart } from "../interfaces/cart.interface";
 
-class CartRepository {
-    private readonly cartKey = (userId: string) => `cart:${userId}`
+// class CartRepository {
+//     private readonly cartKey = (userId: string) => `cart:${userId}`;
 
-    async getCart(userId: string) {
-        const data = await redis.get(this.cartKey(userId));    
-        const parsedData = typeof data === "string" ? JSON.parse(data) : { userId, items: [] };
-        return parsedData;
-    }
+//     async getCart(userId: string): Promise<string | null> {
+//         return await Redis.get(this.cartKey(userId));
+//     }
 
-    async saveCart(cart: ICart) {
-        await redis.set(`cart:${cart.userId}`, JSON.stringify(cart), {ex: 86400}) //* 24h
-    }
+//     async saveCart(cart: ICart): Promise<void> {
+        
+//         await redis.set(this.cartKey(cart.userId), JSON.stringify(cart), { ex: 86400 });
+//     }
 
-    async clearCart(userId: string) {
-        await redis.del(`cart:${userId}`);
-    }
-}
+//     async clearCart(userId: string): Promise<void> {
+//         await redis.del(this.cartKey(userId));
+//     }
+// }
 
-export default new CartRepository();
+// export default new CartRepository();
