@@ -6,7 +6,8 @@ export interface IProduct {
     badge: 'Best Seller' | 'Limited Edition' | null,
     status: 'New' | null,
     category: mongoose.Types.ObjectId,
-    productDetail: IProductDetail;
+    productDetail: IProductDetail,
+    stock: number;
 }
 
 export interface IProductDetail {
