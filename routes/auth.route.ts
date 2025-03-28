@@ -15,4 +15,8 @@ router.get('/checkAuth',middleware.verifyToken,controller.checkAuth);
 router.get('/google', controller.googleAuth)
 router.get('/google/callback', controller.googleCallback);
 
+router.get('/github', controller.githubAuth)
+router.get('/github/callback', controller.githubCallback);
+
+
 export default router;

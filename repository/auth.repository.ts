@@ -1,6 +1,5 @@
-import { IProfileGoogle, IUser } from "../interfaces/user.interface";
+import { IUser } from "../interfaces/user.interface";
 import User from "../models/user.model";
-
 
 class AuthRepository {
     async findEmail(email: string) {
