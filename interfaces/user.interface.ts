@@ -1,18 +1,23 @@
+export interface IOAuth {
+    providerName: 'google' | 'github',
+    providerId: string,
+    email?: string,
+    fullName: string,
+    profilePicture?: string
+}
+
 export interface IUser {
     fullName: string,
     email: string,
-    phoneNumber: number,
-    password: string,
+    password?: string,
     profilePicture: string,
     isVerify: boolean,
-    oauth: {
-        googleId?: string
-    }
+    oauth?: IOAuth[]
 }
 
-export interface IProfileGoogle {
-    id: string,
-    displayName: string,
+export interface IProfile {
+    id?: string,
+    displayName?: string,
     emails?: {
         value: string,
         verified?: boolean

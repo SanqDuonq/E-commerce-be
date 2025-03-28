@@ -1,38 +1,56 @@
-import mongoose, { Schema } from 'mongoose'
-import { IUser } from '../interfaces/user.interface'
+import mongoose, { Schema } from "mongoose";
+import { IUser } from "../interfaces/user.interface";
 
-const UserModel:Schema<IUser> = new Schema({
-    fullName: {
-        type: String,
-        required: true
+const oauthSchema = new Schema(
+  {
+    providerName: {
+      type: String,
+      enum: ["google", "github"],
+      required: true,
+    },
+    providerId: {
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
     },
-    phoneNumber: {
-        type: Number,
-        default: null
+    fullName: {
+      type: String,
     },
     profilePicture: {
-        type: String,
-        default: null
+      type: String,
+    },
+  },
+  { _id: false } 
+);
+
+const UserModel: Schema<IUser> = new Schema(
+  {
+    fullName: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    profilePicture: {
+      type: String,
+      default: null,
     },
     password: {
-        type: String,
-        required: function () {
-            return !this.oauth?.googleId; 
-        }
+      type: String,
     },
     isVerify: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
-    oauth: {
-        googleId: { type: String, unique: true, sparse: true}
-    }
-},{collection: 'User',timestamps: true})
+    oauth: [oauthSchema], 
+  },
+  { collection: "User", timestamps: true }
+);
 
-const User = mongoose.model('User',UserModel);
+const User = mongoose.model("User", UserModel);
 export default User;

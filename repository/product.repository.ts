@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { IProduct, IProductRepo } from "../interfaces/product.interface";
-import Category from "../models/category.model";
 import Product from "../models/product.model";
+import categoryRepository from "./category.repository";
 
 class ProductRepository {
     async findId(id: string) {
@@ -14,11 +14,11 @@ class ProductRepository {
     
     async add(product: IProduct) {
         const newProduct = await Product.create(product);
-        await this.updateCategoryWithProduct(product.category.toString(),newProduct._id.toString());
+        await categoryRepository.updateProductToCategory(product.category,newProduct.id);
         return newProduct;
     }
 
-    async remove(id: string) {
+    async remove(id: mongoose.Types.ObjectId) {
         return await Product.findByIdAndDelete(id);
     }
 
@@ -26,14 +26,11 @@ class ProductRepository {
 
     }
 
-    async updateCategoryWithProduct(categoryId: string, productId: string) {
-        return await Category.findByIdAndUpdate(
-            categoryId,
-            {
-                $push: { product: productId}
-            }
-        )
+    
+    async getProduct() {
+        return await Product.find();
     }
+
 
     async getAllProduct(props: IProductRepo) {
         const filter = await Product.aggregate([

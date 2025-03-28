@@ -4,7 +4,10 @@ import jwtServices from '../services/jwt.services';
 import asyncError from '../middlewares/error.middleware';
 import returnRes from '../utils/response';
 import otpServices from '../services/otp.services';
-import passport from 'passport';
+import emailStrategy from '../strategies/email-strategy';
+import googleStrategy from '../strategies/google-strategy';
+import githubStrategy from '../strategies/github-strategy';
+import { AppContext } from '../strategies/app-context';
 class AuthController {
     signUp = asyncError(async (req:Request,res:Response) => {
         const data = await authServices.signUp(req.body);
@@ -19,10 +22,8 @@ class AuthController {
     })
 
     signIn = asyncError(async(req:Request,res:Response) => {
-        const {email,password} = req.body;
-        const userId = await authServices.signIn(email,password);
-        const accessToken = jwtServices.generateJwt(res,userId);
-        returnRes(res,200,'Sign in successful', accessToken);
+        const contextEmail = new AppContext(new emailStrategy());
+        await contextEmail.signIn(req,res);
     })
 
     logout = asyncError(async(req:Request,res:Response) => {
@@ -48,17 +49,21 @@ class AuthController {
     })
 
     googleAuth = asyncError(async(req: Request, res: Response, next: NextFunction) => {
-        passport.authenticate('google', {scope: ['email', 'profile']}) (req,res,next);
+        const googleContext = new AppContext(new googleStrategy());
+        await googleContext.signIn(req,res,next);
     })
 
     googleCallback = asyncError(async(req: Request, res: Response, next: NextFunction) => {
-        passport.authenticate('google', {session: false}, async(err, user) => {
-            if (!user || err) {
-                return res.redirect('http://localhost:5173/login');
-            }
-            jwtServices.generateJwt(res,user.id);
-            return res.redirect('http://localhost:5173/')
-        })(req,res,next);
+        await new googleStrategy().callback(req,res,next);
+    }) 
+
+    githubAuth = asyncError(async(req: Request, res: Response, next: NextFunction) => {
+        const githubContext = new AppContext(new githubStrategy());
+        await githubContext.signIn(req,res,next);
+    })
+
+    githubCallback = asyncError(async(req: Request, res: Response, next: NextFunction) => {
+        await new githubStrategy().callback(req,res,next);
     }) 
 }
 
