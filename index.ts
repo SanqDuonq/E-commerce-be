@@ -5,7 +5,7 @@ import cors from 'cors';
 import authRoutes from './routes/auth.route';
 import prodRoutes from './routes/product.route';
 import imgRoutes from './routes/upload.route';
-// import cartRoutes from './routes/cart.route';
+import cartRoutes from './routes/cart.route';
 import cateRoutes from './routes/category.route';
 import NotFoundRoute from './middlewares/not-found.middleware';
 import connectCloudinary from './utils/cloudinary';
@@ -31,7 +31,7 @@ app.use('/api/auth',authRoutes);
 app.use('/api/cate',cateRoutes);
 app.use('/api/prod',prodRoutes);
 app.use('/api/img',imgRoutes);
-// app.use('/api/cart',cartRoutes);
+app.use('/api/cart',cartRoutes);
 
 
 app.use(errorHandler);

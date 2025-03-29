@@ -1,9 +1,9 @@
-export interface ICart {
-    userId: string,
-    items: ICartItem[]
-}
+import mongoose from "mongoose";
 
-export interface ICartItem {
-    productId: string,
-    quantity: number
+export interface ICart {
+    userId: mongoose.Types.ObjectId,
+    items: {
+        productId: mongoose.Types.ObjectId,
+        quantity: number
+    }[]
 }

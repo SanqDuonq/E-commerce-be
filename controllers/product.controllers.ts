@@ -16,7 +16,7 @@ class ProductController {
     }
     
     async getAllProduct(req: Request, res: Response) {
-        const {name, page, size} = req.params;
+        const {name, page = 1, size = 10} = req.params;
         const data = await productServices.getProduct(name, Number(page), Number(size));
         returnRes(res, 200, 'Get all product successful', data);
     }

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IProduct, IProductRepo } from "../interfaces/product.interface";
+import { IProduct } from "../interfaces/product.interface";
 import Product from "../models/product.model";
 import categoryRepository from "./category.repository";
 
@@ -32,18 +32,18 @@ class ProductRepository {
     }
 
 
-    async getAllProduct(props: IProductRepo) {
+    async getAllProduct(name: string, page:number, size: number) {
         const filter = await Product.aggregate([
             {
                 $match: {
-                    name: new RegExp(props.name,'i')
+                    name: new RegExp(name,'i')
                 }
             },
             {
-                $skip: (props.page - 1) * props.size
+                $skip: (page - 1) * size
             },
             {
-                $limit: props.size
+                $limit: size
             }
         ])
         return filter;
