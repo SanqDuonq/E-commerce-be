@@ -6,12 +6,27 @@ import otpServices from "./otp.services";
 import otpRepository from "../repository/otp.repository";
 import User from "../models/user.model";
 import { IProfile, IUser } from "../interfaces/user.interface";
+import { OTPInvoker } from "../command/otp-invoker";
+import { GenerateOTP } from "../command/generateOTP";
+import { sendOTP } from "../command/sendOTP";
+import { VerifyOTP } from "../command/verifyOTP";
+import { ResendOTP } from "../command/resendOTP";
 
 class AuthServices {
+    private otpInvoker = new OTPInvoker();
+
     private async checkEmail(email: string) {
         if (await authRepository.findEmail(email)) {
             throwError(404, 'Email is already exists')
         }
+    }
+
+    private async checkVerifyUser(email: string) {
+        const user = await User.findOne({email})
+        if (!user) {
+            throwError(404, 'User not found')
+        }
+        return user?.isVerify;
     }
 
     private async getUserByEmail(email: string) {
@@ -24,23 +39,32 @@ class AuthServices {
         }
     }
 
-    private async checkUserGoogle(id: string) {
-        return await User.findOne({googleId: id})
-    }
-
     signUp = async(user: IUser) => {
         await this.checkEmail(user.email);
         user.password = await bcrypt.Hash(user.password!);
-        const otp = otpServices.generateOTP();
-        await otpServices.saveOTP(user.email,otp);
-        mailServices.sendVerifyEmail(user.email,otp);
+        this.otpInvoker.setCommand(new GenerateOTP(user.email));
+        this.otpInvoker.setCommand(new sendOTP(user.email));
+        await this.otpInvoker.executeCommand(); 
         return await authRepository.createUser(user);
+    }
+
+    verifyEmail = async(email: string, otp: string) => {
+        this.otpInvoker.setCommand(new VerifyOTP(email, otp));
+        return this.otpInvoker.executeCommand();
     }
 
     signIn = async (email: string, password: string) => {
         const user = await this.getUserByEmail(email);
         await this.comparePassword(password, user.password!);
         return user.id;
+    }
+
+    resendOTP = async(email: string) => {
+        if (await this.checkVerifyUser(email)) {
+            throwError(400, 'Email has already been verify');
+        }
+        this.otpInvoker.setCommand(new ResendOTP(email))
+        return this.otpInvoker.executeCommand();
     }
 
     forgotPassword = async (email: string) => {
