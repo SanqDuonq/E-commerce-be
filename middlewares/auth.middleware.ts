@@ -1,6 +1,5 @@
 import {Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { IAuthRequest } from "../interfaces/auth.interface";
 
 function verifyToken(req: Request, res: Response, next: NextFunction) {
 	const accessToken = req.cookies.accessToken;

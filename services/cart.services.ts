@@ -1,23 +1,40 @@
-// import { ICart, ICartItem } from "../interfaces/cart.interface";
-// import cartRepository from "../repository/cart.repository";
+import cartRepository from "../repository/cart.repository";
 
-// class CartServices {
-//     private async checkExistProduct(cart: ICart, productId: string, quantity: number) {
-//         const existProduct = cart.items.find((item: ICartItem) => item.productId === productId);
-//         existProduct ? existProduct.quantity = quantity : cart.items.push({ productId, quantity });
-//         return cart;
-//     }
+class CartServices {
+    async getCart(userId: string) {
+        let cart = await cartRepository.getCartFromCache(userId);
+        if (!cart) {
+            cart = await cartRepository.getCartFromDB(userId) || {userId, items: []}
+            await cartRepository.setCartToCache(userId,cart);
+        }
+        return cart;
+    }
 
-//     async addToCart(userId: string, items: ICartItem) {
-        
-//     }
+    async addToCart(userId: string, productId: string, quantity: number) {
+        let cart = await this.getCart(userId);
+        const existingItem = cart.items.find((item: any) => String(item.productId) === String(productId));
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        }
+        else {
+            cart.items.push({productId, quantity})
+        }
+        await cartRepository.setCartToCache(userId, cart);
+        await cartRepository.saveCartToDB(userId, cart);
+        return cart;
+    }
 
-//     async getCart(userId: string) {
-//         const cart = await cartRepository.getCart(userId);
-//         return cart ? JSON.parse(cart) : {userId, items: []}
-//         return await cartRepository.getCart(userId);
-//     }
+    async updateCart(userId: string, productId: string, quantity: number) {
+        return await cartRepository.updateCart(userId, productId, quantity);
+    }
 
-// }
+    async removeCart(userId: string, productId: string) {
+        return await cartRepository.removeCart(userId, productId)
+    }
 
-// export default new CartServices();
+    async clearCart(userId: string) {
+        return await cartRepository.deleteCart(userId);
+    }
+}
+
+export default new CartServices();

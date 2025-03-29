@@ -20,7 +20,7 @@ class ProductServices {
     }
 
     async getProduct(name: string, page: number, size: number) {
-        return await productRepository.getAllProduct({name, page, size})
+        return await productRepository.getAllProduct(name, page, size);
     }
 }
 
