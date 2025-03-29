@@ -1,4 +1,4 @@
-import { IAuthStrategy } from "../interfaces/auth.interface";
+import { IAuthStrategy } from "../interfaces/strategy.interface";
 import { Request,Response, NextFunction } from "express";
 
 export class AppContext {

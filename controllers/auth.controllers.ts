@@ -8,6 +8,7 @@ import emailStrategy from '../strategies/email-strategy';
 import googleStrategy from '../strategies/google-strategy';
 import githubStrategy from '../strategies/github-strategy';
 import { AppContext } from '../strategies/app-context';
+
 class AuthController {
     signUp = asyncError(async (req:Request,res:Response) => {
         const data = await authServices.signUp(req.body);
@@ -17,7 +18,7 @@ class AuthController {
 
     verifyEmail = asyncError(async(req:Request,res:Response) => {
         const {email,otp} = req.body;
-        await otpServices.verifyOTP(email,otp);
+        await authServices.verifyEmail(email,otp);
         returnRes(res,200,'Verify email successful');
     })
 
@@ -30,6 +31,13 @@ class AuthController {
         jwtServices.clearJwt(res);
         returnRes(res,200,'Log out successful')
     })
+
+    resendOTP = asyncError(async (req: Request, res: Response) => {
+        const {email} = req.body;
+        await authServices.resendOTP(email);
+        returnRes(res, 200, 'Resend OTP successful');
+    })
+
 
     forgotPassword = asyncError(async(req:Request,res:Response) => { 
         const {email} = req.body;

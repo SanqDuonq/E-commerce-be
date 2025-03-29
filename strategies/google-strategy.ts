@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { IAuthStrategy } from "../interfaces/auth.interface";
+import { IAuthStrategy } from "../interfaces/strategy.interface";
 import passport from "passport";
 import jwtServices from "../services/jwt.services";
 
