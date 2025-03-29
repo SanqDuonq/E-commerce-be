@@ -1,12 +1,14 @@
-import { IVoucher, IVoucherValidator, IVoucherCalculator } from '../../interfaces/voucher.interface';
+import { IVoucher, IVoucherPrototype } from '../../interfaces/voucher.interface';
 import Voucher from '../../models/voucher.model';
 
-export abstract class BaseVoucher implements IVoucherValidator, IVoucherCalculator {
+export abstract class BaseVoucher implements IVoucherPrototype {
     protected voucher: IVoucher;
 
     constructor(voucher: IVoucher) {
         this.voucher = voucher;
     }
+
+    abstract clone(): BaseVoucher;
 
     validate(orderValue: number, productIds?: string[]): boolean {
         // Kiểm tra thời gian

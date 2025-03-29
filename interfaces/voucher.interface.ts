@@ -23,4 +23,12 @@ export interface IVoucherValidator {
 
 export interface IVoucherCalculator {
     calculateDiscount(orderValue: number, productIds?: string[]): number;
+}
+
+export interface IVoucherPrototype {
+    clone(): IVoucherPrototype;
+    validate(orderValue: number, productIds?: string[]): boolean;
+    getErrorMessage(): string;
+    calculateDiscount(orderValue: number, productIds?: string[]): number;
+    incrementUsageCount(): Promise<void>;
 } 

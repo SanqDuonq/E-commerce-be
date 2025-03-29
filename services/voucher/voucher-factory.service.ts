@@ -5,16 +5,27 @@ import { OrderVoucher } from './order-voucher.service';
 import { BaseVoucher } from './base-voucher.service';
 
 export class VoucherFactory {
-    static createVoucher(voucher: IVoucher): BaseVoucher {
+    private static prototypes: Map<string, BaseVoucher> = new Map();
+
+    static initialize(voucher: IVoucher): void {
         switch (voucher.applyTo) {
             case 'product':
-                return new ProductVoucher(voucher);
+                this.prototypes.set('product', new ProductVoucher(voucher));
+                break;
             case 'shipping':
-                return new ShippingVoucher(voucher);
+                this.prototypes.set('shipping', new ShippingVoucher(voucher));
+                break;
             case 'order':
-                return new OrderVoucher(voucher);
-            default:
-                throw new Error('Invalid voucher type');
+                this.prototypes.set('order', new OrderVoucher(voucher));
+                break;
         }
+    }
+
+    static createVoucher(voucher: IVoucher): BaseVoucher {
+        const prototype = this.prototypes.get(voucher.applyTo);
+        if (!prototype) {
+            throw new Error('Invalid voucher type');
+        }
+        return prototype.clone();
     }
 } 

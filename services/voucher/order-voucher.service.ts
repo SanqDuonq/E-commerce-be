@@ -1,6 +1,10 @@
 import { BaseVoucher } from './base-voucher.service';
 
 export class OrderVoucher extends BaseVoucher {
+    clone(): OrderVoucher {
+        return new OrderVoucher({...this.voucher});
+    }
+
     validate(orderValue: number, productIds?: string[]): boolean {
         return super.validate(orderValue, productIds);
     }

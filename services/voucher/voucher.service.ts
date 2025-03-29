@@ -42,6 +42,8 @@ class VoucherService {
             };
         }
 
+        VoucherFactory.initialize(voucher);
+        
         const voucherInstance = VoucherFactory.createVoucher(voucher);
         const isValid = voucherInstance.validate(orderValue, productIds);
 
