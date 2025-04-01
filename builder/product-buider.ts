@@ -1,32 +1,27 @@
-import mongoose, { FilterQuery } from "mongoose";
-import { IProduct } from "../interfaces/product.interface";
+import mongoose, { FilterQuery, PipelineStage } from "mongoose";
 import Product from "../models/product.model";
 
-export class ProductQueryBuilder {
-    private query: FilterQuery<IProduct> = {};
-
-    filterById(id: string) {
-        this.query._id = new mongoose.Types.ObjectId(id);
-        return this;
-    }
+class ProductQueryBuilder {
+    private pipeline: PipelineStage[] = [];
 
     filterByName(name: string) {
-        this.query.name = new RegExp(name, 'i');
-        return this;
-    }
-
-    filterByCategory(categoryId: string) {
-        this.query.category = new mongoose.Types.ObjectId(categoryId);
+        if(name) {
+            this.pipeline.push({
+                $match: {name: new RegExp(name, 'i')}
+            })
+        }
         return this;
     }
 
     paginate(page: number, size: number) {
-        this.query.$skip = (page - 1) * size;
-        this.query.$limit = size
+        this.pipeline.push({$skip: (page - 1) * size});
+        this.pipeline.push({$limit: size})
         return this;
     }
 
-    async execute() {
-        return await Product.find(this.query);
+    async exec() {
+        return Product.aggregate(this.pipeline);
     }
 }
+
+export { ProductQueryBuilder }
