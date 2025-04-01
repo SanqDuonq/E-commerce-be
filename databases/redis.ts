@@ -1,8 +1,9 @@
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
+import { configManager } from '../singleton/singleton.config';
 dotenv.config();
 
-export const redis = new Redis(process.env.UPSTASH_REDIS_URL!);
+export const redis = new Redis(configManager.get('UPSTASH_REDIS_URL'));
 
 const connectRedis = async () => {
     try {

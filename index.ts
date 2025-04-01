@@ -9,15 +9,16 @@ import cartRoutes from './routes/cart.route';
 import cateRoutes from './routes/category.route';
 import NotFoundRoute from './middlewares/not-found.middleware';
 import connectCloudinary from './utils/cloudinary';
-import Database from './databases/mongo';
 import errorHandler from './utils/error-handle';
 import './utils/passport';
 import connectRedis from './databases/redis';
 import passport from 'passport';
+import connectMongoDB from './databases/mongo';
+import { configManager } from './singleton/singleton.config';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = configManager.get('PORT');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -33,15 +34,13 @@ app.use('/api/prod',prodRoutes);
 app.use('/api/img',imgRoutes);
 app.use('/api/cart',cartRoutes);
 
-
 app.use(errorHandler);
 app.use(NotFoundRoute);
 
-const database = Database.getInstance();
 
 app.listen(port, () => {
-    console.log(`App started at http://localhost:${port}`);
-    database.connectMongoDB();    
+    console.log(`App started at http://localhost:${port}`)
+    connectMongoDB();
     connectRedis();
     connectCloudinary();
 })
