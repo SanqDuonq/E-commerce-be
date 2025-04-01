@@ -31,8 +31,6 @@ class ProductRepository {
         return await Product.find();
     }
 
-
-
     async getAllProduct(name: string, page:number, size: number) {
         const filter = await Product.aggregate([
             {
