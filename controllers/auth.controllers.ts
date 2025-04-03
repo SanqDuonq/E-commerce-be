@@ -62,7 +62,9 @@ class AuthController {
     })
 
     googleCallback = asyncError(async(req: Request, res: Response, next: NextFunction) => {
-        await new googleStrategy().callback(req,res,next);
+        const token = await new googleStrategy().callback(req,res,next);
+        console.log("Google Auth Token:", token);
+
     }) 
 
     githubAuth = asyncError(async(req: Request, res: Response, next: NextFunction) => {
