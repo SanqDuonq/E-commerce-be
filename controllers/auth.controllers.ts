@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import authServices from '../services/auth.services';
 import jwtServices from '../services/jwt.services';
 import asyncError from '../middlewares/error.middleware';
-import returnRes from '../utils/response';
+import {returnRes} from '../utils/response';
 import otpServices from '../services/otp.services';
 import emailStrategy from '../strategies/email-strategy';
 import googleStrategy from '../strategies/google-strategy';

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { HttpError } from 'http-errors';
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error("Error:", err); //! Error
     if (err instanceof HttpError) {
         res.status(err.status).json({
             message: err.message

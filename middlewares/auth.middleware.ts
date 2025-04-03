@@ -1,7 +1,8 @@
 import {Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { IAuthRequest } from "../interfaces/auth.interface";
 
-function verifyToken(req: Request, res: Response, next: NextFunction) {
+function verifyToken(req: IAuthRequest, res: Response, next: NextFunction) {
 	const accessToken = req.cookies.accessToken;
 	if (!accessToken) {
 		res.status(401).json({

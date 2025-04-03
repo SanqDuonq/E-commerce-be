@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction} from 'express';
+import { BadRequestError } from '../utils/appError';
 
 const asyncError = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -8,5 +9,4 @@ const asyncError = (fn: (req: Request, res: Response, next: NextFunction) => Pro
         });
     }
 }
-
 export default asyncError;

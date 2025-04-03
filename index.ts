@@ -7,6 +7,10 @@ import prodRoutes from './routes/product.route';
 import imgRoutes from './routes/upload.route';
 import cartRoutes from './routes/cart.route';
 import cateRoutes from './routes/category.route';
+import shippingRoutes from './routes/shipping.route';
+import voucherRoutes from './routes/voucher.route';
+import paymentRoutes from './routes/payment.route';
+import orderRouter from './routes/order.route'
 import NotFoundRoute from './middlewares/not-found.middleware';
 import connectCloudinary from './utils/cloudinary';
 import errorHandler from './utils/error-handle';
@@ -33,6 +37,10 @@ app.use('/api/cate',cateRoutes);
 app.use('/api/prod',prodRoutes);
 app.use('/api/img',imgRoutes);
 app.use('/api/cart',cartRoutes);
+app.use('/api/shipping',shippingRoutes);
+app.use('/api/voucher',voucherRoutes);
+app.use('/api/payment',paymentRoutes);
+app.use('/api/order',orderRouter)
 
 app.use(errorHandler);
 app.use(NotFoundRoute);

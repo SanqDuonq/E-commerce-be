@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IAuthStrategy } from "../interfaces/strategy.interface";
 import authServices from "../services/auth.services";
 import jwtServices from "../services/jwt.services";
-import returnRes from "../utils/response";
+import {returnRes} from "../utils/response";
 
 class EmailPasswordStrategy implements IAuthStrategy {
     async signIn(req: Request, res: Response): Promise<void> {

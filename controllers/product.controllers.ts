@@ -1,7 +1,7 @@
 import {Request,Response} from 'express'
 import asyncError from '../middlewares/error.middleware';
 import productServices from '../services/product.services';
-import returnRes from '../utils/response';
+import {returnRes} from '../utils/response';
 import mongoose from 'mongoose';
 import { ProductQueryBuilder } from '../builder/product-buider';
 
@@ -15,6 +15,7 @@ class ProductController {
         const data = await productServices.removeProduct(new mongoose.Types.ObjectId(req.params.id));
         returnRes(res, 200, `Remove ${data!.name} successful`);
     }
+    
     
     async getAllProduct(req: Request, res: Response) {
         const {name, page, size} = req.params;

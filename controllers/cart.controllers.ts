@@ -1,7 +1,7 @@
 import { Request, Response} from 'express';
 import asyncError from '../middlewares/error.middleware';
 import cartServices from '../services/cart.services';
-import returnRes from '../utils/response';
+import {returnRes} from '../utils/response';
 
 class CartController {
     add = asyncError(async (req: Request, res: Response) => {
