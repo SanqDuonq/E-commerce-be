@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import {Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { IAuthRequest } from "../interfaces/auth.interface";
 
@@ -15,7 +15,7 @@ function verifyToken(req: IAuthRequest, res: Response, next: NextFunction) {
             accessToken,
             process.env.ACCESS_TOKEN!
         ) as JwtPayload;
-        req.user = decode.userId;
+        req.user = decode.userId
         next();
     } catch (error) {
         res.status(403).json({

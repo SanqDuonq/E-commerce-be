@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Category from "../models/category.model";
 
 class CategoryRepository {
@@ -23,6 +24,12 @@ class CategoryRepository {
 
     async getAll(categoryName?: string) {
         return categoryName ? await this.findName(categoryName) : await Category.find();
+    }
+
+    async updateProductToCategory(categoryId: mongoose.Types.ObjectId, productId: mongoose.Types.ObjectId) {
+        return await Category.findByIdAndUpdate(categoryId, {
+            $push: { product: productId }
+        })
     }
 }
 

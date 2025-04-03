@@ -12,6 +12,8 @@ export interface OrderInput {
   items: {
     productId: string;
     quantity: number;
+    color: string;
+    size: string;
   }[];
   shippingAddress: {
     street: string;
@@ -40,12 +42,14 @@ export class OrderBuilder {
     return this;
   }
 
-  setItems(items: { productId: string; quantity: number }[]): OrderBuilder {
+  setItems(items: { productId: string; quantity: number; color: string; size: string }[]): OrderBuilder {
     this.orderData.items = items.map(item => ({
       productId: new mongoose.Types.ObjectId(item.productId),
       quantity: item.quantity,
       price: 0,
-      name: ''
+      name: '',
+      color: item.color,
+      size: item.size
     }));
     return this;
   }
@@ -116,7 +120,9 @@ export class OrderBuilder {
         productId: new mongoose.Types.ObjectId(item.productId),
         quantity: item.quantity,
         price: product!.price,
-        name: product!.name
+        name: product!.name,
+        color: item.color,
+        size: item.size
       });
     }
 
@@ -139,7 +145,17 @@ export class OrderBuilder {
     for (const item of this.orderItems) {
       await Product.findByIdAndUpdate(
         item.productId,
-        { $inc: { stock: -item.quantity } }
+        { 
+          $inc: { 
+            'variants.$[elem].stock': -item.quantity 
+          }
+        },
+        { 
+          arrayFilters: [{ 
+            'elem.color': item.color, 
+            'elem.size': item.size 
+          }]
+        }
       );
     }
 

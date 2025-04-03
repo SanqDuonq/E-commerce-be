@@ -3,27 +3,31 @@ export interface IProduct {
     name: string,
     thumbnail: string,
     price: number,
+    discount?: string
+    type: string,
     badge: 'Best Seller' | 'Limited Edition' | null,
     status: 'New' | null,
+    description: string,
     category: mongoose.Types.ObjectId,
-    productDetail: IProductDetail,
-    stock: number;
+    variants: IVariant[]
+    shape?: string[]
+    reviews: IReview[]
 }
 
-export interface IProductDetail {
-    description: string,
-    variant: [{
-        options: {
-            image: string[],
-            color: string,
-            stock: number,   
-            size: number[],
-            price: number,
-            material: string,
-        }[],
-        shape: string[];
-    }]
+export interface IVariant {
+    image: string[],
+    color: string,
+    size: string,
+    stock: number,
+    material: string
 }
+
+export interface IReview {
+    user: mongoose.Types.ObjectId,
+    rating: number,
+    comment: string
+}
+
 
 export interface IProductMethod {
     addProduct(data: IProduct): Promise<IProduct>,

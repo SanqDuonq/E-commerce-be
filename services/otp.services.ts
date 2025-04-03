@@ -12,7 +12,7 @@ class OtpServices {
         })
     }
 
-    async findOTP(email: string, otp: string) {
+    findOTP = async (email: string, otp: string) => {
         if (!(await otpRepository.findOTP(email,otp))) {
             throwError(404, 'OTP wrong or expired')
         }

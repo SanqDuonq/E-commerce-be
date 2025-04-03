@@ -1,52 +1,79 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import authServices from '../services/auth.services';
-import { catchAsync } from '../utils/catchAsync';
 import jwtServices from '../services/jwt.services';
-import { success } from '../utils/response';
+import asyncError from '../middlewares/error.middleware';
+import {returnRes} from '../utils/response';
 import otpServices from '../services/otp.services';
-import { IAuthRequest } from '../interfaces/auth.interface';
+import emailStrategy from '../strategies/email-strategy';
+import googleStrategy from '../strategies/google-strategy';
+import githubStrategy from '../strategies/github-strategy';
+import { AppContext } from '../strategies/app-context';
 
 class AuthController {
-    signUp = catchAsync(async (req:Request,res:Response) => {
+    signUp = asyncError(async (req:Request,res:Response) => {
         const data = await authServices.signUp(req.body);
         const accessToken = jwtServices.generateJwt(res,data.id);
-        return success(res, 201, 'Sign up successful', accessToken);
+        returnRes(res,201,'Sign up successful',accessToken);
     })
 
-    verifyEmail = catchAsync(async(req:Request,res:Response) => {
+    verifyEmail = asyncError(async(req:Request,res:Response) => {
         const {email,otp} = req.body;
-        await otpServices.verifyOTP(email,otp);
-        return success(res, 200, 'Verify email successful');
+        await authServices.verifyEmail(email,otp);
+        returnRes(res,200,'Verify email successful');
     })
 
-    signIn = catchAsync(async(req:Request,res:Response) => {
-        const {email,password} = req.body;
-        const userId = await authServices.signIn(email,password);
-        const accessToken = jwtServices.generateJwt(res,userId);
-        return success(res, 200, 'Sign in successful', accessToken);
+    signIn = asyncError(async(req:Request,res:Response) => {
+        const contextEmail = new AppContext(new emailStrategy());
+        await contextEmail.signIn(req,res);
     })
 
-    logout = catchAsync(async(req:Request,res:Response) => {
+    logout = asyncError(async(req:Request,res:Response) => {
         jwtServices.clearJwt(res);
-        return success(res, 200, 'Log out successful');
+        returnRes(res,200,'Log out successful')
     })
 
-    forgotPassword = catchAsync(async(req:Request,res:Response) => { 
+    resendOTP = asyncError(async (req: Request, res: Response) => {
+        const {email} = req.body;
+        await authServices.resendOTP(email);
+        returnRes(res, 200, 'Resend OTP successful');
+    })
+
+
+    forgotPassword = asyncError(async(req:Request,res:Response) => { 
         const {email} = req.body;
         await authServices.forgotPassword(email);
-        return success(res, 200, `OTP sent to ${email}`);
+        returnRes(res,200,`OTP sent to ${email}`)
     })
     
-    resetPassword = catchAsync(async(req:Request,res:Response) => {
+    resetPassword = asyncError(async(req:Request,res:Response) => {
         const {email, otp, newPassword} = req.body;
         await authServices.resetPassword(email, otp,newPassword);
-        return success(res, 200, 'Reset password successful');
+        returnRes(res,200,'Reset password successful')
     })
    
-    checkAuth = catchAsync(async(req: IAuthRequest, res: Response) => {
+    checkAuth = asyncError(async(req: Request, res: Response) => {
         const user = req.user;
-        return success(res, 200, 'Check authentication successful', user);
+        returnRes(res,200,'Check authentication successful',user);
     })
+
+    googleAuth = asyncError(async(req: Request, res: Response, next: NextFunction) => {
+        const googleContext = new AppContext(new googleStrategy());
+        await googleContext.signIn(req,res,next);
+    })
+
+    googleCallback = asyncError(async(req: Request, res: Response, next: NextFunction) => {
+        await new googleStrategy().callback(req,res,next);
+    }) 
+
+    githubAuth = asyncError(async(req: Request, res: Response, next: NextFunction) => {
+        const githubContext = new AppContext(new githubStrategy());
+        await githubContext.signIn(req,res,next);
+    })
+
+    githubCallback = asyncError(async(req: Request, res: Response, next: NextFunction) => {
+        await new githubStrategy().callback(req,res,next);
+    }) 
 }
 
-export default new AuthController();
+const authController = new AuthController();
+export default authController;

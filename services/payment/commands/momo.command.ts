@@ -1,5 +1,17 @@
 import { PaymentCommand } from './payment.command';
 import crypto from 'crypto';
+import https from 'https';
+import { BadRequestError } from '../../../utils/appError';
+
+interface MomoResponse {
+    resultCode: number;
+    payUrl?: string;
+    orderId: string;
+    requestId: string;
+    amount: number;
+    message: string;
+    responseTime: number;
+}
 
 export class MomoCommand extends PaymentCommand {
     private partnerCode: string;
@@ -12,7 +24,7 @@ export class MomoCommand extends PaymentCommand {
         this.partnerCode = process.env.MOMO_PARTNER_CODE!;
         this.accessKey = process.env.MOMO_ACCESS_KEY!;
         this.secretKey = process.env.MOMO_SECRET_KEY!;
-        this.endpoint = process.env.MOMO_ENDPOINT!;
+        this.endpoint = 'https://test-payment.momo.vn/v2/gateway/api/create';
     }
 
     private createSignature(data: string): string {
@@ -27,58 +39,95 @@ export class MomoCommand extends PaymentCommand {
             const orderInfo = `Thanh toan don hang ${this.orderId}`;
             const redirectUrl = `${process.env.FRONTEND_URL}/payment/success`;
             const ipnUrl = `${process.env.BACKEND_URL}/api/payment/momo/callback`;
+            const requestId = this.orderId;
+            const extraData = '';
+            const orderGroupId = '';
+            const autoCapture = true;
+            const lang = 'vi';
 
-            const requestId = Date.now().toString();
-            const orderType = 'momo_wallet';
-            const transId = `MOMO_${this.orderId}_${Date.now()}`;
-
-            const rawSignature = `accessKey=${this.accessKey}&amount=${this.amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${this.orderId}&orderInfo=${orderInfo}&partnerCode=${this.partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=captureWallet`;
+            const rawSignature = `accessKey=${this.accessKey}&amount=${this.amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${this.orderId}&orderInfo=${orderInfo}&partnerCode=${this.partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=payWithMethod`;
 
             const signature = this.createSignature(rawSignature);
 
-            const requestBody = {
+            const requestBody = JSON.stringify({
                 partnerCode: this.partnerCode,
-                partnerName: 'Test',
-                storeId: 'Test Store',
-                requestId: requestId,
+                partnerName: "Test",
+                storeId: "MomoTestStore",
+                requestId,
                 amount: this.amount,
                 orderId: this.orderId,
-                orderInfo: orderInfo,
-                redirectUrl: redirectUrl,
-                ipnUrl: ipnUrl,
-                lang: 'vi',
-                extraData: '',
-                requestType: 'captureWallet',
-                signature: signature,
-                orderType: orderType,
-                transId: transId
-            };
-
-            const response = await fetch(this.endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody)
+                orderInfo,
+                redirectUrl,
+                ipnUrl,
+                lang,
+                requestType: 'payWithMethod',
+                autoCapture,
+                extraData,
+                orderGroupId,
+                signature
             });
 
-            const result = await response.json();
-
-            if (result.payUrl) {
-                return {
-                    success: true,
-                    data: {
-                        transactionId: transId,
-                        status: 'pending',
-                        payUrl: result.payUrl
+            return new Promise<{
+                success: boolean;
+                error?: string;
+                data?: any;
+            }>((resolve, reject) => {
+                const options = {
+                    hostname: 'test-payment.momo.vn',
+                    port: 443,
+                    path: '/v2/gateway/api/create',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Content-Length': Buffer.byteLength(requestBody)
                     }
                 };
-            }
 
-            return {
-                success: false,
-                error: 'Thanh toán Momo thất bại'
-            };
+                const req = https.request(options, res => {
+                    let body = '';
+                    res.setEncoding('utf8');
+                    res.on('data', (chunk) => {
+                        body += chunk;
+                    });
+                    res.on('end', () => {
+                        try {
+                            const response = JSON.parse(body) as MomoResponse;
+                            if (response.resultCode === 0) {
+                                resolve({
+                                    success: true,
+                                    data: {
+                                        transactionId: response.orderId,
+                                        status: 'pending',
+                                        payUrl: response.payUrl,
+                                        message: response.message,
+                                        resultCode: response.resultCode
+                                    }
+                                });
+                            } else {
+                                resolve({
+                                    success: false,
+                                    error: response.message || 'Thanh toán Momo thất bại'
+                                });
+                            }
+                        } catch (error) {
+                            resolve({
+                                success: false,
+                                error: 'Lỗi xử lý phản hồi từ Momo'
+                            });
+                        }
+                    });
+                });
+
+                req.on('error', (error) => {
+                    resolve({
+                        success: false,
+                        error: 'Lỗi kết nối đến Momo'
+                    });
+                });
+
+                req.write(requestBody);
+                req.end();
+            });
         } catch (error) {
             return {
                 success: false,

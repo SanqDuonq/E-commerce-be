@@ -4,8 +4,10 @@ import middleware from '../middlewares/auth.middleware';
 
 const router = express.Router();
 
-router.post('/add',middleware.verifyToken, controller.addToCart);
-router.get('/get',middleware.verifyToken, controller.getUserCart);
-router.put('/update',middleware.verifyToken, controller.updateCart);
+router.post('/add-cart', middleware.verifyToken, controller.add);
+router.get('/get-cart/:id', middleware.verifyToken, controller.get);
+router.put('/update-cart', middleware.verifyToken, controller.update);
+router.delete('/remove-cart', middleware.verifyToken, controller.remove);
+router.delete('/clear-cart', middleware.verifyToken, controller.clear);
 
 export default router;

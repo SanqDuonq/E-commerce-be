@@ -7,6 +7,8 @@ export const validateOrderItems = [
     body('items').isArray().notEmpty().withMessage('Items are required'),
     body('items.*.productId').isMongoId().withMessage('Invalid product ID'),
     body('items.*.quantity').isInt({ min: 1 }).withMessage('Quantity must be at least 1'),
+    body('items.*.color').notEmpty().withMessage('Color is required'),
+    body('items.*.size').notEmpty().withMessage('Size is required'),
     validateRequest
 ];
 

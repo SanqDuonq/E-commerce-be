@@ -10,7 +10,11 @@ export class OrderValidator {
       if (!product) {
         throw new BadRequestError(`Product ${item.productId} not found`);
       }
-      if (product.stock < item.quantity) {
+      const variant = product.variants.find(v => v.color === item.color && v.size === item.size);
+      if (!variant) {
+        throw new BadRequestError(`Variant not found for product ${product.name}`);
+      }
+      if (variant.stock < item.quantity) {
         throw new BadRequestError(`Insufficient stock for product ${product.name}`);
       }
     }

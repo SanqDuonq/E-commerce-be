@@ -1,7 +1,6 @@
 import { IUser } from "../interfaces/user.interface";
 import User from "../models/user.model";
 
-
 class AuthRepository {
     async findEmail(email: string) {
         return await User.findOne({email});
@@ -24,6 +23,8 @@ class AuthRepository {
             password: hashPassword
         })
     }
+
+
 }
 
 export default new AuthRepository();
