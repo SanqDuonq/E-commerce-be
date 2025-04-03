@@ -1,17 +1,16 @@
-import mongoose, { FilterQuery, PipelineStage } from "mongoose";
+import { PipelineStage } from "mongoose";
 import Product from "../models/product.model";
 
 class ProductQueryBuilder {
     private pipeline: PipelineStage[] = [];
 
-    filterByName(name: string) {
-        if(name) {
-            this.pipeline.push({
-                $match: {name: new RegExp(name, 'i')}
-            })
+    filterByName(name?: string) {
+        if (name && name.trim() !== "") {
+            this.pipeline.push({ $match: { name: new RegExp(name, 'i') } });
         }
         return this;
     }
+    
 
     paginate(page: number, size: number) {
         this.pipeline.push({$skip: (page - 1) * size});

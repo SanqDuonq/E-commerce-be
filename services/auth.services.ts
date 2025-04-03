@@ -30,8 +30,13 @@ class AuthServices {
     }
 
     private async getUserByEmail(email: string) {
-        return (await authRepository.findEmail(email)) ?? throwError(404, 'Email not found');
+        const user = await User.findOne({ email });
+        if (!user) {
+            throw new Error("User not found");
+        }
+        return user;
     }
+    
 
     private async comparePassword(password: string, hashPassword: string) {
         if (!(await bcrypt.Compare(password,hashPassword))) {

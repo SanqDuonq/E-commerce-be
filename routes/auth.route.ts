@@ -1,10 +1,12 @@
 import express from 'express';
 import controller from '../controllers/auth.controllers';
 import middleware from '../middlewares/auth.middleware';
+import { validateRequest } from '../middlewares/validate.middleware';
+import { signUpSchema } from '../schema/auth.schema';
 
 const router = express.Router();
 
-router.post('/sign-in',controller.signIn);
+router.post('/sign-in',validateRequest(signUpSchema), controller.signIn);
 router.post('/sign-up',controller.signUp);
 router.post('/verify-email',controller.verifyEmail);
 router.post('/resend-otp', controller.resendOTP);

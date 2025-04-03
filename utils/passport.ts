@@ -29,8 +29,7 @@ passport.use(
 								providerId: profile.id,
 								email,
 								fullName: profile.displayName,
-								profilePicture:
-									profile.photos?.[0].value || null,
+								profilePicture: profile.photos?.[0].value || null,
 							},
 						],
 					});
@@ -86,9 +85,9 @@ passport.use(
 								providerId: profile.id,
 								email,
 								fullName:
-									profile.displayName || profile.username,
+								profile.displayName || profile.username,
 								profilePicture:
-									profile.photos?.[0].value || null,
+								profile.photos?.[0].value || null,
 							},
 						],
 					});

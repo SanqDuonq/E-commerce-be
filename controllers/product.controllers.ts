@@ -3,7 +3,7 @@ import asyncError from '../middlewares/error.middleware';
 import productServices from '../services/product.services';
 import returnRes from '../utils/response';
 import mongoose from 'mongoose';
-import { ProductQueryBuilder } from '../builder/product-buider';
+import { ProductQueryBuilder } from '../builder/product-builder';
 
 class ProductController {
     addProduct = asyncError(async (req: Request, res: Response) =>  {
@@ -17,9 +17,9 @@ class ProductController {
     }
     
     async getAllProduct(req: Request, res: Response) {
-        const {name, page, size} = req.params;
+        const {name, page, size} = req.query;
         const data = await new ProductQueryBuilder()
-            .filterByName(name)
+            .filterByName(String(name))
             .paginate(Number(page), Number(size))
             .exec()
         returnRes(res, 200, 'Get all product successful', data);
