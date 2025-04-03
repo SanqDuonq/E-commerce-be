@@ -16,6 +16,7 @@ class ProductController {
         returnRes(res, 200, `Remove ${data!.name} successful`);
     }
     
+    
     async getAllProduct(req: Request, res: Response) {
         const {name, page, size} = req.params;
         const data = await new ProductQueryBuilder()
