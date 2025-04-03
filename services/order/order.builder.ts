@@ -5,8 +5,9 @@ import Product from '../../models/product.model';
 import { IProduct } from '../../interfaces/product.interface'
 import Voucher from '../../models/voucher.model';
 import mongoose from 'mongoose';
+import { OrderValidator } from './order.validator';
 
-interface OrderInput {
+export interface OrderInput {
   customerId: string;
   items: {
     productId: string;
@@ -43,8 +44,8 @@ export class OrderBuilder {
     this.orderData.items = items.map(item => ({
       productId: new mongoose.Types.ObjectId(item.productId),
       quantity: item.quantity,
-      price: 0, // Will be set in validateAndBuild
-      name: '' // Will be set in validateAndBuild
+      price: 0,
+      name: ''
     }));
     return this;
   }
@@ -97,25 +98,29 @@ export class OrderBuilder {
   }
 
   async validateAndBuild(): Promise<IOrder> {
+    // Validate items
+    await OrderValidator.validateItems(this.orderData.items || []);
+    
+    // Validate voucher
+    if (this.orderData.voucherId) {
+      await OrderValidator.validateVoucher(
+        this.orderData.voucherId.toString(),
+        this.orderData.customerId?.toString() || ''
+      );
+    }
+
+    // Build order items
     for (const item of this.orderData.items || []) {
-      const product = await Product.findById(item.productId) as IProduct;
-      if (!product) {
-        throw new BadRequestError(`Product ${item.productId} not found`);
-      }
-
-      // if (product.stock < item.quantity) {
-      //   throw new BadRequestError(`Insufficient stock for product ${product.name}`);
-      // }
-
+      const product = await Product.findById(item.productId);
       this.orderItems.push({
         productId: new mongoose.Types.ObjectId(item.productId),
         quantity: item.quantity,
-        price: product.price,
-        name: product.name
+        price: product!.price,
+        name: product!.name
       });
     }
 
-    // Create order with all data
+    // Create order
     const order = await Order.create({
       ...this.orderData,
       items: this.orderItems,
@@ -123,15 +128,22 @@ export class OrderBuilder {
       orderStatus: 'PENDING'
     });
 
-    // Update product stock
-    // for (const item of this.orderItems) {
-    //   await Product.findByIdAndUpdate(
-    //     item.productId,
-    //     { $inc: { stock: -item.quantity } }
-    //   );
-    // }
+    // Update related data
+    await this.updateRelatedData(order);
 
-    // Update voucher status if used
+    return order;
+  }
+
+  private async updateRelatedData(order: IOrder): Promise<void> {
+    // Update product stock
+    for (const item of this.orderItems) {
+      await Product.findByIdAndUpdate(
+        item.productId,
+        { $inc: { stock: -item.quantity } }
+      );
+    }
+
+    // Update voucher
     if (this.orderData.voucherId) {
       await Voucher.findByIdAndUpdate(
         this.orderData.voucherId,
@@ -147,6 +159,5 @@ export class OrderBuilder {
         }
       );
     }
-    return order;
   }
 } 
