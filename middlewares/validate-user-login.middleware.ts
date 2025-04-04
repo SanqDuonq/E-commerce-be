@@ -1,12 +1,11 @@
 // middlewares/validate-user-login.middleware.ts
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { IAuthRequest } from "../interfaces/auth.interface";
 import BaseMiddleware from "./base.middleware";
 import { BadRequestError } from "../utils/appError";
 
 class ValidateUserLoginMiddleware extends BaseMiddleware {
-    handle(req: IAuthRequest, res: Response, next: NextFunction): void {
+    handle(req: Request, res: Response, next: NextFunction): void {
         const accessToken = req.cookies.accessToken;
         
         if (!accessToken) {
