@@ -1,5 +1,5 @@
 import express from 'express';
-import orderController from '../controllers/order.controller';
+import orderController from '../controllers/order.controllers';
 import ValidateOrderItemsMiddleware from '../middlewares/validate-order-items.middleware';
 import ValidateShippingAddressMiddleware from '../middlewares/validate-shipping-address.middleware';
 import ValidateUserLoginMiddleware from '../middlewares/validate-user-login.middleware';

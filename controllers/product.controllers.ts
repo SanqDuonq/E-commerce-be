@@ -11,19 +11,25 @@ class ProductController {
         returnRes(res, 201, 'Add product successful', data);
     })
 
-    async removeProduct(req: Request, res: Response) {
+    editProduct = asyncError(async (req: Request, res: Response) => {
+        const {id} = req.params;
+        const data = await productServices.editProduct(id, req.body);
+        returnRes(res, 200, 'Edit product successful', data!)
+    })
+
+    removeProduct = asyncError(async(req: Request, res: Response) => {
         const data = await productServices.removeProduct(new mongoose.Types.ObjectId(req.params.id));
         returnRes(res, 200, `Remove ${data!.name} successful`);
-    }
+    })
     
     
     async getAllProduct(req: Request, res: Response) {
-        const {name, page, size} = req.query;
-        const data = await new ProductQueryBuilder()
-            .filterByName(String(name))
-            .paginate(Number(page), Number(size))
-            .exec()
-        returnRes(res, 200, 'Get all product successful', data);
+        const {name = '', page = 1, limit = 10, category='',badge='', size='', material='', 
+            color='',shape='', status=''
+        } = req.query;
+        const {data, count} = await productServices.getProduct(String(name),Number(page),Number(limit),String(category),
+            String(badge), String(size), String(material), String(color), String(shape), String(status))
+        returnRes(res, 200, 'Get all product successful', {page, limit, count, data});
     }
 }
 

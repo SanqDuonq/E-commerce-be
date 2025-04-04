@@ -22,8 +22,8 @@ class ProductRepository {
         return await Product.findByIdAndDelete(id);
     }
 
-    async edit() {
-
+    async edit(id: string, product: IProduct) {
+        return await Product.findByIdAndUpdate(id, product)
     }
 
     

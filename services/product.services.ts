@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { IProduct } from "../interfaces/product.interface";
 import productRepository from "../repository/product.repository";
 import throwError from "../utils/create-error";
+import { ProductQueryBuilder } from "../builder/product-builder";
+import cors from 'cors';
 
 class ProductServices {
     private async checkExistName(name: string) {
@@ -15,12 +17,29 @@ class ProductServices {
         return await productRepository.add(product);
     }    
 
+    async editProduct(id: string, product: IProduct) {
+        return await productRepository.edit(id, product)
+    }
+
     async removeProduct(id: mongoose.Types.ObjectId) {
         return await productRepository.remove(id);
     }
 
-    async getProduct(name: string, page: number, size: number) {
-        return await productRepository.getAllProduct(name, page, size);
+    async getProduct(name: string, page: number, limit: number, category: string, badge: string, size: string, material: string, shape: string, color: string, status: string) {
+        const builder = new ProductQueryBuilder()
+            .setName(name)
+            .setCategory(category)
+            .setBadge(badge)
+            .setSize(size)
+            .setPaginate(page, limit)
+            .setMaterial(material)
+            .setColor(color)
+            .setShape(shape)
+            .setStatus(status)
+            
+        const data = await builder.exec();
+        const count = await builder.count();
+        return { data, count };
     }
 }
 

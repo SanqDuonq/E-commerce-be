@@ -4,7 +4,6 @@ export interface IProduct {
     thumbnail: string,
     price: number,
     discount?: string
-    type: string,
     badge: 'Best Seller' | 'Limited Edition' | null,
     status: 'New' | null,
     description: string,
